@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { useWidgetStore } from "./store/widgetStore";
 import { useFootballData } from "./hooks/useFootballData";
 import { useGoalNotify } from "./hooks/useGoalNotify";
@@ -83,6 +84,7 @@ export default function App() {
       {viewMode === "mini" && <WidgetMini />}
       {panelOpen && <MatchPanel />}
       {widgetAiOpen && <WidgetAiChatbox />}
+      <SpeedInsights />
     </div>
   );
 }
