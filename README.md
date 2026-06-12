@@ -1,3 +1,10 @@
+# One click setup 
+
+https://football-widget.vercel.app/ 
+This will download a installer and its done
+
+---
+
 # Football Widget
 
 A neat, retro-style desktop widget that sits on your screen to show live and upcoming football fixtures, broadcaster info, and win probabilities. 
