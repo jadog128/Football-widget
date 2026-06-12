@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Football Widget — Desktop Companion</title>
+  <style>
+    :root {
+      --bg-start: #2D2520;
+      --bg-end: #171311;
+      --text-color: #F5E6D3;
+      --accent-color: #E9A84A;
+      --accent-hover: #f1b96a;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+    }
+
+    header {
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #FFFFFF 0%, var(--accent-color) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      font-size: 1.15rem;
+      color: #A0886B;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 3rem 2rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      margin-bottom: 3rem;
+    }
+
+    .mascot-preview {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .btn-container {
+      margin-bottom: 2rem;
+    }
+
+    .download-btn {
+      display: inline-block;
+      background: var(--accent-color);
+      color: #171311;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(233, 168, 74, 0.25);
+    }
+
+    .download-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(233, 168, 74, 0.35);
+    }
+
+    .download-btn:active {
+      transform: translateY(0);
+    }
+
+    .file-info {
+      font-size: 0.85rem;
+      color: #8F7D74;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      text-align: left;
+      margin-top: 2rem;
+    }
+
+    .feature-item {
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .feature-item h3 {
+      font-size: 1rem;
+      color: var(--accent-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-item p {
+      font-size: 0.85rem;
+      color: #A0886B;
+      line-height: 1.4;
+    }
+
+    footer {
+      font-size: 0.85rem;
+      color: #5A4232;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: #8F7D74;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Football Widget</h1>
+      <p class="subtitle">A clean, transparent football fixture and stats companion for your Windows desktop.</p>
+    </header>
+
+    <main class="card">
+      <div class="mascot-preview">⚽</div>
+      
+      <div class="btn-container">
+        <a href="Football Widget Setup 1.0.0.exe" download class="download-btn">
+          Download for Windows
+        </a>
+      </div>
+
+      <div class="file-info">
+        File: Football Widget Setup 1.0.0.exe (approx. 73 MB)
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-item">
+          <h3>Sizing Options</h3>
+          <p>Double-click or use controls to cycle between Wide, Compact, and Mini form factors on your screen.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Built-in AI Assistant</h3>
+          <p>Ask tactical and match questions using your own locally stored Gemini or OpenRouter keys.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Fixture & Stats Drawer</h3>
+          <p>Quick access to upcoming matches, recent results, and head-to-head history details.</p>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>Source code available on <a href="https://github.com/jadog128/Football-widget.git" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+    </footer>
+  </div>
+</body>
+</html>
