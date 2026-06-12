@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { useWidgetStore } from "./store/widgetStore";
 import { useFootballData } from "./hooks/useFootballData";
 import { useGoalNotify } from "./hooks/useGoalNotify";
@@ -73,16 +74,19 @@ export default function App() {
   };
 
   return (
-    <div
-      className="w-full h-full flex flex-col border p-0.5 select-none overflow-hidden"
-      style={cardStyle}
-      onContextMenu={(e) => e.preventDefault()}
-    >
-      {viewMode === "wide" && <WidgetWide />}
-      {viewMode === "compact" && <WidgetCompact />}
-      {viewMode === "mini" && <WidgetMini />}
-      {panelOpen && <MatchPanel />}
-      {widgetAiOpen && <WidgetAiChatbox />}
-    </div>
+    <>
+      <div
+        className="w-full h-full flex flex-col border p-0.5 select-none overflow-hidden"
+        style={cardStyle}
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        {viewMode === "wide" && <WidgetWide />}
+        {viewMode === "compact" && <WidgetCompact />}
+        {viewMode === "mini" && <WidgetMini />}
+        {panelOpen && <MatchPanel />}
+        {widgetAiOpen && <WidgetAiChatbox />}
+      </div>
+      <Analytics />
+    </>
   );
 }
