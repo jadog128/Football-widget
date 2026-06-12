@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { useWidgetStore } from "../store/widgetStore";
 import WidgetWide from "./WidgetWide";
 import WidgetCompact from "./WidgetCompact";
@@ -1045,6 +1046,7 @@ export default function CustomizerApp() {
 
         </div>
       </div>
+      <Analytics />
     </div>
   );
 }
