@@ -14,37 +14,19 @@ import { useWidgetStore } from "../store/widgetStore";
 import { playSound } from "../utils/audioService";
 import { speakEvent } from "../utils/textToSpeech";
 
-function isFavouriteTeam(teamName, favTeams) {
-  if (!favTeams || favTeams.length === 0) return false;
-  const lower = teamName.toLowerCase();
-  return favTeams.some((t) => lower.includes(t.toLowerCase()));
-}
-
-function notify(title, body) {
-  // Try Electron native notification first
-  if (window.electronAPI?.showNotification) {
-    window.electronAPI.showNotification(title, body);
-  }
-  // Fallback: HTML5 Notification API (works in packaged apps)
-  if (typeof Notification !== "undefined") {
-    if (Notification.permission === "granted") {
-      new Notification(title, { body });
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission();
-    }
-  }
+function sendToast(toastData) {
+  // Send to the floating toast window via IPC
+  window.electronAPI?.showToast?.({ id: Date.now(), ...toastData });
 }
 
 export function useGoalNotify() {
   const matches = useWidgetStore((s) => s.matches);
   const customTheme = useWidgetStore((s) => s.customTheme);
-  const addNotification = useWidgetStore((s) => s.addNotification);
   const prevRef = useRef(new Map());
 
   const soundEnabled = customTheme?.soundEnabled !== false;
   const volume = customTheme?.volume ?? 0.5;
   const speechEnabled = !!customTheme?.speechEnabled;
-  const favTeams = customTheme?.favoriteTeams || [];
 
   useEffect(() => {
     const prev = prevRef.current;
@@ -62,12 +44,8 @@ export function useGoalNotify() {
       const p = prev.get(m.id);
       if (!p) continue; // first time seeing this match
 
-      const homeIsFav = isFavouriteTeam(m.homeTeam.name, favTeams);
-      const awayIsFav = isFavouriteTeam(m.awayTeam.name, favTeams);
-
       // ── Kick off ─────────────────────────────────────────────────────────
       if (p.status === "scheduled" && m.status === "live") {
-        notify(`🟢 Kick off!`, `${m.homeTeam.name} vs ${m.awayTeam.name}`);
         if (soundEnabled) playSound("whistle", volume);
         if (speechEnabled) {
           speakEvent(
@@ -76,22 +54,17 @@ export function useGoalNotify() {
           );
         }
 
-        // Toast for followed team kickoff
-        if (homeIsFav || awayIsFav) {
-          addNotification({
-            scoringTeam: homeIsFav ? m.homeTeam.name : m.awayTeam.name,
-            opponent: homeIsFav ? m.awayTeam.name : m.homeTeam.name,
-            homeScore,
-            awayScore,
-            scorer: null,
-            minute: "0",
-            competition:
-              m.competition?.shortName || m.competition?.name || "Match",
-            status: "live",
-            teamColor: "#52B788",
-            type: "kickoff",
-          });
-        }
+        sendToast({
+          type: "kickoff",
+          scoringTeam: m.homeTeam.name,
+          opponent: m.awayTeam.name,
+          homeScore,
+          awayScore,
+          competition:
+            m.competition?.shortName || m.competition?.name || "Match",
+          status: "live",
+          teamColor: "#52B788",
+        });
         continue;
       }
 
@@ -101,11 +74,7 @@ export function useGoalNotify() {
           const scorer = m.scorers
             ?.filter((s) => s.team === "home")
             .slice(-1)[0];
-          const bodyText = scorer
-            ? `${scorer.name} ${scorer.minute}' — ${m.homeTeam.name} ${homeScore}–${awayScore} ${m.awayTeam.name}`
-            : `${m.homeTeam.name} ${homeScore}–${awayScore} ${m.awayTeam.name}`;
 
-          notify(`⚽  GOAL!  ${m.homeTeam.name}`, bodyText);
           if (soundEnabled) playSound("fanfare", volume);
           if (speechEnabled) {
             speakEvent(
@@ -116,33 +85,26 @@ export function useGoalNotify() {
             );
           }
 
-          // Beautiful in-widget toast for followed team goals
-          if (homeIsFav) {
-            addNotification({
-              scoringTeam: m.homeTeam.name,
-              opponent: m.awayTeam.name,
-              homeScore,
-              awayScore,
-              scorer: scorer?.name || null,
-              minute: scorer?.minute || "?",
-              competition:
-                m.competition?.shortName || m.competition?.name || "Match",
-              status: "live",
-              teamColor: "#52B788",
-              type: "goal",
-            });
-          }
+          sendToast({
+            type: "goal",
+            scoringTeam: m.homeTeam.name,
+            opponent: m.awayTeam.name,
+            homeScore,
+            awayScore,
+            scorer: scorer?.name || null,
+            minute: scorer?.minute || "?",
+            competition:
+              m.competition?.shortName || m.competition?.name || "Match",
+            status: "live",
+            teamColor: "#52B788",
+          });
         }
 
         if (awayScore > p.away) {
           const scorer = m.scorers
             ?.filter((s) => s.team === "away")
             .slice(-1)[0];
-          const bodyText = scorer
-            ? `${scorer.name} ${scorer.minute}' — ${m.homeTeam.name} ${homeScore}–${awayScore} ${m.awayTeam.name}`
-            : `${m.homeTeam.name} ${homeScore}–${awayScore} ${m.awayTeam.name}`;
 
-          notify(`⚽  GOAL!  ${m.awayTeam.name}`, bodyText);
           if (soundEnabled) playSound("fanfare", volume);
           if (speechEnabled) {
             speakEvent(
@@ -153,31 +115,24 @@ export function useGoalNotify() {
             );
           }
 
-          // Beautiful in-widget toast for followed team goals
-          if (awayIsFav) {
-            addNotification({
-              scoringTeam: m.awayTeam.name,
-              opponent: m.homeTeam.name,
-              homeScore,
-              awayScore,
-              scorer: scorer?.name || null,
-              minute: scorer?.minute || "?",
-              competition:
-                m.competition?.shortName || m.competition?.name || "Match",
-              status: "live",
-              teamColor: "#E05353",
-              type: "goal",
-            });
-          }
+          sendToast({
+            type: "goal",
+            scoringTeam: m.awayTeam.name,
+            opponent: m.homeTeam.name,
+            homeScore,
+            awayScore,
+            scorer: scorer?.name || null,
+            minute: scorer?.minute || "?",
+            competition:
+              m.competition?.shortName || m.competition?.name || "Match",
+            status: "live",
+            teamColor: "#E05353",
+          });
         }
       }
 
       // ── Full time ─────────────────────────────────────────────────────────
       if (p.status === "live" && m.status === "finished") {
-        notify(
-          `🏁  Full Time`,
-          `${m.homeTeam.name} ${homeScore}–${awayScore} ${m.awayTeam.name}`,
-        );
         if (soundEnabled) playSound("fulltime", volume);
         if (speechEnabled) {
           speakEvent(
@@ -186,25 +141,20 @@ export function useGoalNotify() {
           );
         }
 
-        // Toast for followed team result
-        if (homeIsFav || awayIsFav) {
-          addNotification({
-            scoringTeam: homeIsFav ? m.homeTeam.name : m.awayTeam.name,
-            opponent: homeIsFav ? m.awayTeam.name : m.homeTeam.name,
-            homeScore,
-            awayScore,
-            scorer: null,
-            minute: "FT",
-            competition:
-              m.competition?.shortName || m.competition?.name || "Match",
-            status: "finished",
-            teamColor: "#A0886B",
-            type: "fulltime",
-          });
-        }
+        sendToast({
+          type: "fulltime",
+          scoringTeam: m.homeTeam.name,
+          opponent: m.awayTeam.name,
+          homeScore,
+          awayScore,
+          competition:
+            m.competition?.shortName || m.competition?.name || "Match",
+          status: "finished",
+          teamColor: "#A0886B",
+        });
       }
     }
 
     prevRef.current = next;
-  }, [matches, soundEnabled, volume, speechEnabled, favTeams, addNotification]);
+  }, [matches, soundEnabled, volume, speechEnabled, favTeams]);
 }
