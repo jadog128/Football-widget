@@ -24,17 +24,18 @@ export default function App() {
   const prevMatch = useWidgetStore((s) => s.prevMatch);
   const nextMatch = useWidgetStore((s) => s.nextMatch);
 
+  const addNotification = useWidgetStore((s) => s.addNotification);
+
   const [isPinned, setIsPinned] = useState(false);
   const [menuPos, setMenuPos] = useState(null);
+  const [deepseekOpen, setDeepseekOpen] = useState(false);
+  const [creditsOpen, setCreditsOpen] = useState(false);
 
   // Background update checker
   useEffect(() => {
     const cleanup = startUpdatePolling(addNotification);
     return () => cleanup();
   }, [addNotification]);
-  const [deepseekOpen, setDeepseekOpen] = useState(false);
-  const [creditsOpen, setCreditsOpen] = useState(false);
-  const addNotification = useWidgetStore((s) => s.addNotification);
 
   // Track DeepSeek window state
   useEffect(() => {
