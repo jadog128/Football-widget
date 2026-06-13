@@ -156,5 +156,5 @@ export function useGoalNotify() {
     }
 
     prevRef.current = next;
-  }, [matches, soundEnabled, volume, speechEnabled, favTeams]);
+  }, [matches, soundEnabled, volume, speechEnabled]);
 }
