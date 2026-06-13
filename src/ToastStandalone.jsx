@@ -158,8 +158,8 @@ function ToastItem({ toast, onDismiss }) {
                   : toast.scoringTeam}
             </div>
 
-            {/* Update download button */}
-            {isUpdate && (
+            {/* Update download button — only when an update is actually available */}
+            {isUpdate && toast.homeScore !== "✅" && (
               <button
                 onClick={() => {
                   const url =
