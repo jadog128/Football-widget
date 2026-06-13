@@ -190,6 +190,7 @@
                         href="Football Widget V7.9.5 Setup.exe"
                         download
                         class="download-btn"
+                        onclick="trackDownload()"
                     >
                         Download for Windows
                     </a>
@@ -223,6 +224,22 @@
                     </div>
                 </div>
             </main>
+
+            <script>
+                function trackDownload() {
+                    try {
+                        var v =
+                            window.va ||
+                            function () {
+                                (window.vaq = window.vaq || []).push(arguments);
+                            };
+                        v("event", {
+                            name: "download",
+                            data: { type: "installer", version: "7.9.5" },
+                        });
+                    } catch (e) {}
+                }
+            </script>
 
             <footer>
                 <p>
