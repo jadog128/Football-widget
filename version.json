@@ -1,6 +1,6 @@
 {
-  "version": "7.9.7",
+  "version": "7.9.8",
   "downloadUrl": "https://football-widget.vercel.app",
-  "releaseNotes": "Interactive first-run setup wizard with 7-step guide. Token-based update detection. Bug fixes.",
+  "releaseNotes": "Fixed match notifications — kickoff, goal, and full-time toasts now appear in the floating toast window for all matches.",
   "minimumVersion": "7.0.0"
 }
