@@ -91,5 +91,8 @@ To talk to the AI Assistant:
 <img width="584" height="696" alt="image" src="https://github.com/user-attachments/assets/b97df88c-9c62-4ffb-b66f-d7d139c5d65b" />
 <img width="517" height="580" alt="image" src="https://github.com/user-attachments/assets/005d045b-12ed-4a44-b84b-5b97eedb8ff1" />
 <img width="515" height="235" alt="image" src="https://github.com/user-attachments/assets/53b8c8e8-5d13-4c75-b43a-9dfbc8481df7" />
+<img width="452" height="198" alt="image" src="https://github.com/user-attachments/assets/ded3c564-1c30-441e-94d5-4ba2fe7aff00" />
+<img width="200" height="190" alt="image" src="https://github.com/user-attachments/assets/b936e64f-d5e0-4b3a-94fb-39656d471549" />
+<img width="177" height="149" alt="image" src="https://github.com/user-attachments/assets/16b34f4d-1311-4bde-bce8-ee077e1b9d60" />
 
 ---
