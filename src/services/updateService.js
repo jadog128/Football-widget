@@ -49,7 +49,9 @@ function isNewerVersion(a, b) {
  */
 async function fetchVersionManifest() {
   try {
-    const res = await fetch(VERSION_URL, { signal: AbortSignal.timeout(10_000) });
+    const res = await fetch(VERSION_URL, {
+      signal: AbortSignal.timeout(10_000),
+    });
     if (!res.ok) return null;
     return await res.json();
   } catch {
@@ -83,6 +85,38 @@ export async function checkForUpdate() {
   return { available: false };
 }
 
+function buildUpdateNotification(update) {
+  return {
+    id: Date.now(),
+    type: "update",
+    scoringTeam: `Update v${update.version} Available`,
+    opponent: update.releaseNotes || "Click to download the latest version.",
+    homeScore: "⬇ Download",
+    awayScore: "",
+    competition: "Update",
+    status: "finished",
+    teamColor: "#E9A84A",
+    downloadUrl: update.downloadUrl,
+  };
+}
+
+/**
+ * Manually check for updates and show a notification.
+ * Returns the update result or null.
+ */
+export async function checkForUpdatesAndNotify(addNotification) {
+  try {
+    const update = await checkForUpdate();
+    if (update?.available) {
+      addNotification(buildUpdateNotification(update));
+      return update;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Starts background update polling. Returns a cleanup function.
  * Fires a toast notification when an update is found.
@@ -111,20 +145,7 @@ export function startUpdatePolling(addNotification) {
             localStorage.setItem("updateNotifiedVersion", update.version);
           } catch {}
 
-          addNotification({
-            id: Date.now(),
-            type: "update",
-            scoringTeam: `Update v${update.version} Available`,
-            opponent: update.releaseNotes
-              ? update.releaseNotes
-              : "Click to download the latest version.",
-            homeScore: "⬇ Download",
-            awayScore: "",
-            competition: "Update",
-            status: "finished",
-            teamColor: "#E9A84A",
-            downloadUrl: update.downloadUrl,
-          });
+          addNotification(buildUpdateNotification(update));
         }
       }
     } catch {

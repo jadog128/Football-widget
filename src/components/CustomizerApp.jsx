@@ -1142,6 +1142,53 @@ export default function CustomizerApp() {
                   >
                     🔵 Test DeepSeek
                   </button>
+                  <button
+                    onClick={() => {
+                      window.electronAPI?.showToast?.({
+                        id: Date.now(),
+                        type: "update",
+                        scoringTeam: "Update v9.9.9 Available",
+                        opponent:
+                          "Test notification — this is what an update alert looks like.",
+                        homeScore: "⬇ Download",
+                        awayScore: "",
+                        competition: "Update",
+                        status: "finished",
+                        teamColor: "#E9A84A",
+                        downloadUrl: "https://football-widget.vercel.app",
+                      });
+                    }}
+                    className="flex-1 bg-[#E9A84A] hover:bg-[#F4A475] text-[#171311] font-bold text-xs py-2 rounded-lg cursor-pointer transition-all active:scale-95"
+                  >
+                    ⬇ Test Update
+                  </button>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={async () => {
+                      const { checkForUpdatesAndNotify } =
+                        await import("../services/updateService");
+                      const result = await checkForUpdatesAndNotify((notif) =>
+                        window.electronAPI?.showToast?.(notif),
+                      );
+                      if (!result) {
+                        window.electronAPI?.showToast?.({
+                          id: Date.now(),
+                          type: "update",
+                          scoringTeam: "No Updates Available",
+                          opponent: "You're running the latest version.",
+                          homeScore: "✅",
+                          awayScore: "",
+                          competition: "Update",
+                          status: "finished",
+                          teamColor: "#52B788",
+                        });
+                      }
+                    }}
+                    className="w-full bg-[#2D2520] hover:bg-white/5 border border-white/10 text-[#F5E6D3] font-bold text-xs py-2 rounded-lg cursor-pointer transition-all active:scale-95"
+                  >
+                    🔍 Check for Updates
+                  </button>
                 </div>
               </div>
 
