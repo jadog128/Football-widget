@@ -78,7 +78,7 @@ export function getDeterministicMatchDetails(match) {
 
     // Events timeline
     const events = [];
-    if (match.scorers) {
+    if (Array.isArray(match.scorers)) {
       match.scorers.forEach((s) => {
         if (!s) return;
         events.push({
@@ -503,13 +503,16 @@ function AiCommentary({ match }) {
     setLoading(true);
     setResponse(null);
     try {
+      const home = match.homeTeam?.name || "Home Team";
+      const away = match.awayTeam?.name || "Away Team";
+      const comp = match.competition?.name || "";
       const text = await window.electronAPI?.askAiAboutGame({
-        home: match.homeTeam.name,
-        away: match.awayTeam.name,
-        comp: match.competition.name,
+        home,
+        away,
+        comp,
         status: match.status,
         score: match.score,
-        scorers: match.scorers,
+        scorers: Array.isArray(match.scorers) ? match.scorers : [],
       });
       setResponse(text || "No commentary returned.");
     } catch (err) {
@@ -521,7 +524,7 @@ function AiCommentary({ match }) {
 
   useEffect(() => {
     fetchAiAnalysis();
-  }, [match.id]);
+  }, [match?.id]);
 
   return (
     <div className="flex flex-col gap-2 font-mono text-[9px] text-[#F5E6D3]">

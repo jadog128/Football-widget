@@ -1,6 +1,6 @@
 {
-  "version": "7.9.9",
-  "downloadUrl": "https://football-widget.vercel.app",
-  "releaseNotes": "24-hour update cooldown — skip intermediate versions and only get the latest. Match notifications now fire through the floating toast window.",
+  "version": "8.0.0",
+  "downloadUrl": "https://pitchview.vercel.app",
+  "releaseNotes": "Major update: fixed match panel crash when clicking fixtures. Added null safety for scorers, AI commentary, and match data. Bumped to 8.0.0.",
   "minimumVersion": "7.0.0"
 }
