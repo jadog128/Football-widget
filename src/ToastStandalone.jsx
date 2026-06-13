@@ -43,8 +43,9 @@ function ToastItem({ toast, onDismiss }) {
   }, [exiting, onDismiss, toast.id]);
 
   const isDeepseek = toast.type === "deepseek";
+  const isUpdate = toast.type === "update";
   const isGoal = toast.status === "live";
-  const isFulltime = toast.status === "finished" && !isDeepseek;
+  const isFulltime = toast.status === "finished" && !isDeepseek && !isUpdate;
   const mascotSize = 4;
 
   return (
@@ -62,19 +63,23 @@ function ToastItem({ toast, onDismiss }) {
         style={{
           width: 330,
           background: "#1C1610",
-          borderColor: isDeepseek
-            ? "rgba(82, 183, 136, 0.3)"
-            : isGoal
-              ? "rgba(255, 120, 70, 0.35)"
-              : "rgba(255, 255, 255, 0.1)",
+          borderColor: isUpdate
+            ? "rgba(233, 168, 74, 0.35)"
+            : isDeepseek
+              ? "rgba(82, 183, 136, 0.3)"
+              : isGoal
+                ? "rgba(255, 120, 70, 0.35)"
+                : "rgba(255, 255, 255, 0.1)",
           boxShadow: "0 8px 32px rgba(0,0,0,0.7)",
         }}
       >
         <div className="flex items-start gap-3">
           {/* ── Mascot ───────────────────────────────────────────── */}
           <div className="flex-shrink-0 mt-0.5">
-            {isDeepseek ? (
-              <div className={isGoal ? "animate-bob" : "animate-bob"}>
+            {isUpdate ? (
+              <div className="animate-bob text-2xl leading-none mt-1">⬇</div>
+            ) : isDeepseek ? (
+              <div className="animate-bob">
                 <DeepSeekWhale variant="compact" size={mascotSize} />
               </div>
             ) : (
@@ -102,11 +107,13 @@ function ToastItem({ toast, onDismiss }) {
                         : "#E9A84A",
                   }}
                 >
-                  {isDeepseek
-                    ? "⚠ Low Credits"
-                    : isGoal
-                      ? "⚽ Goal!"
-                      : "🏁 Full Time"}
+                  {isUpdate
+                    ? "⬇ Update Available"
+                    : isDeepseek
+                      ? "⚠ Low Credits"
+                      : isGoal
+                        ? "⚽ Goal!"
+                        : "🏁 Full Time"}
                 </span>
               </div>
               <button
@@ -122,13 +129,34 @@ function ToastItem({ toast, onDismiss }) {
               className="mt-1.5 text-[13px] font-medium leading-snug"
               style={{ color: "#F5E6D3" }}
             >
-              {isDeepseek
+              {isUpdate
                 ? toast.opponent || toast.scoringTeam
-                : toast.scoringTeam}
+                : isDeepseek
+                  ? toast.opponent || toast.scoringTeam
+                  : toast.scoringTeam}
             </div>
 
+            {/* Update download button */}
+            {isUpdate && (
+              <button
+                onClick={() => {
+                  const url =
+                    toast.downloadUrl || "https://football-widget.vercel.app";
+                  window.electronAPI?.openExternal?.(url);
+                  setExiting(true);
+                }}
+                className="mt-2 w-full py-1.5 rounded-lg font-bold text-[11px] uppercase tracking-wider cursor-pointer no-drag transition-all active:scale-95"
+                style={{
+                  background: "#E9A84A",
+                  color: "#171311",
+                }}
+              >
+                ⬇ Download Now
+              </button>
+            )}
+
             {/* Football score line */}
-            {!isDeepseek && (
+            {!isDeepseek && !isUpdate && (
               <div
                 className="flex items-center gap-2 mt-1 text-[12px]"
                 style={{ color: "#A0886B" }}

@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   // ── Notifications & opacity ───────────────────────────────────────────────
   showNotification: (title, body) =>
     ipcRenderer.send("show-notification", { title, body }),
+  openExternal: (url) => ipcRenderer.send("open-external", url),
   setOpacity: (pct) => ipcRenderer.send("set-opacity", pct),
 
   // ── Customizer ────────────────────────────────────────────────────────────

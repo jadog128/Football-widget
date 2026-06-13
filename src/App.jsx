@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useWidgetStore } from "./store/widgetStore";
+import { startUpdatePolling } from "./services/updateService";
 import { useFootballData } from "./hooks/useFootballData";
 import { useGoalNotify } from "./hooks/useGoalNotify";
 import WidgetWide from "./components/WidgetWide";
@@ -25,6 +26,12 @@ export default function App() {
 
   const [isPinned, setIsPinned] = useState(false);
   const [menuPos, setMenuPos] = useState(null);
+
+  // Background update checker
+  useEffect(() => {
+    const cleanup = startUpdatePolling(addNotification);
+    return () => cleanup();
+  }, [addNotification]);
   const [deepseekOpen, setDeepseekOpen] = useState(false);
   const [creditsOpen, setCreditsOpen] = useState(false);
   const addNotification = useWidgetStore((s) => s.addNotification);

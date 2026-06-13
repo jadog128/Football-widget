@@ -692,6 +692,15 @@ function registerIpcHandlers() {
     applyOpacity(Math.max(40, Math.min(100, pct))),
   );
 
+  // Open external URL (for update download links)
+  ipcMain.on("open-external", (_e, url) => {
+    if (url && typeof url === "string") {
+      shell
+        .openExternal(url)
+        .catch((err) => log("open-external error:", err.message));
+    }
+  });
+
   // DeepSeek standalone window
   ipcMain.on("open-deepseek-widget", () => openDeepseekWindow());
   ipcMain.on("close-deepseek-widget", () => closeDeepseekWindow());

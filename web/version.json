@@ -1,0 +1,6 @@
+{
+  "version": "7.9.5",
+  "downloadUrl": "https://football-widget.vercel.app",
+  "releaseNotes": "In-app update notifications with one-click download. Floating toasts now support update alerts with download button.",
+  "minimumVersion": "7.0.0"
+}
