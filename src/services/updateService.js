@@ -105,13 +105,17 @@ export async function checkForUpdatesAndNotify(addNotification) {
 /**
  * Starts background polling. Returns a cleanup function.
  */
+/** Cooldown between update notifications (24 hours) */
+const NOTIFY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Starts background polling. Returns a cleanup function.
+ * Uses a 24-hour cooldown: if multiple versions release in a day,
+ * only the first triggers a notification. The user sees whichever
+ * version was latest at that moment.
+ */
 export function startUpdatePolling(addNotification) {
   let active = true;
-  let lastNotifiedToken = null;
-
-  try {
-    lastNotifiedToken = localStorage.getItem("updateNotifiedToken");
-  } catch {}
 
   const poll = async () => {
     if (!active) return;
@@ -121,11 +125,19 @@ export function startUpdatePolling(addNotification) {
       if (!active) return;
 
       if (update?.available) {
-        const remoteToken = (await fetchText(TOKEN_URL))?.trim() || "";
-        if (remoteToken && remoteToken !== lastNotifiedToken) {
-          lastNotifiedToken = remoteToken;
+        // Check cooldown — only notify once per 24 hours
+        let lastNotifiedTime = 0;
+        try {
+          lastNotifiedTime = parseInt(
+            localStorage.getItem("updateNotifiedTime") || "0",
+            10,
+          );
+        } catch {}
+
+        const now = Date.now();
+        if (now - lastNotifiedTime > NOTIFY_COOLDOWN_MS) {
           try {
-            localStorage.setItem("updateNotifiedToken", remoteToken);
+            localStorage.setItem("updateNotifiedTime", String(now));
           } catch {}
 
           addNotification({
