@@ -77,7 +77,26 @@ function ToastItem({ toast, onDismiss }) {
           {/* ── Mascot ───────────────────────────────────────────── */}
           <div className="flex-shrink-0 mt-0.5">
             {isUpdate ? (
-              <div className="animate-bob text-2xl leading-none mt-1">⬇</div>
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                className="animate-bob"
+                style={{ imageRendering: "pixelated" }}
+              >
+                <rect x="1" y="1" width="10" height="3" fill="#E9A84A" />
+                <rect x="1" y="4" width="10" height="1" fill="#C95B35" />
+                <rect x="2" y="5" width="8" height="1" fill="#C95B35" />
+                <rect x="3" y="6" width="6" height="1" fill="#C95B35" />
+                <rect x="4" y="7" width="4" height="1" fill="#E9A84A" />
+                <rect x="5" y="8" width="2" height="1" fill="#E9A84A" />
+                <rect x="5" y="0" width="2" height="1" fill="#E9A84A" />
+                <rect x="5" y="8" width="2" height="3" fill="#F5E6D3" />
+                <rect x="4" y="9" width="4" height="1" fill="#F5E6D3" />
+                <rect x="3" y="10" width="6" height="1" fill="#F5E6D3" />
+                <rect x="6" y="8" width="1" height="1" fill="#52B788" />
+              </svg>
             ) : isDeepseek ? (
               <div className="animate-bob">
                 <DeepSeekWhale variant="compact" size={mascotSize} />
@@ -108,7 +127,7 @@ function ToastItem({ toast, onDismiss }) {
                   }}
                 >
                   {isUpdate
-                    ? "⬇ Update Available"
+                    ? "New Version"
                     : isDeepseek
                       ? "⚠ Low Credits"
                       : isGoal
@@ -126,11 +145,14 @@ function ToastItem({ toast, onDismiss }) {
 
             {/* Body */}
             <div
-              className="mt-1.5 text-[13px] font-medium leading-snug"
-              style={{ color: "#F5E6D3" }}
+              className="mt-1 text-[12px] leading-snug"
+              style={{ color: isUpdate ? "#E9A84A" : "#F5E6D3" }}
             >
               {isUpdate
-                ? toast.opponent || toast.scoringTeam
+                ? (toast.scoringTeam || "Update Available").replace(
+                    "Update v",
+                    "v",
+                  )
                 : isDeepseek
                   ? toast.opponent || toast.scoringTeam
                   : toast.scoringTeam}
@@ -145,13 +167,15 @@ function ToastItem({ toast, onDismiss }) {
                   window.electronAPI?.openExternal?.(url);
                   setExiting(true);
                 }}
-                className="mt-2 w-full py-1.5 rounded-lg font-bold text-[11px] uppercase tracking-wider cursor-pointer no-drag transition-all active:scale-95"
+                className="mt-2 w-full py-2 rounded-xl font-bold text-[12px] uppercase tracking-widest cursor-pointer no-drag transition-all active:scale-95 hover:brightness-110"
                 style={{
-                  background: "#E9A84A",
+                  background:
+                    "linear-gradient(135deg, #E9A84A 0%, #D4923A 100%)",
                   color: "#171311",
+                  boxShadow: "0 2px 12px rgba(233, 168, 74, 0.3)",
                 }}
               >
-                ⬇ Download Now
+                ⬇ Download Update
               </button>
             )}
 
