@@ -25,7 +25,7 @@ const CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
 // The current known token — matches update-token.txt in the repo root.
 // Only change this when publishing a real update.
 const CURRENT_TOKEN =
-  "b8e4c3d7f2a1e9b6c0d4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z5";
+  "c9f5d4e8a3b2f7c6d1e0g5h6i7j8k9l0m1n2o3p4q5r6s7t8u9v0w1x2y3z4a5b6";
 
 async function fetchText(url) {
   try {

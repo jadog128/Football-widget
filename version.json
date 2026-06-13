@@ -1,6 +1,6 @@
 {
-  "version": "7.9.6",
+  "version": "7.9.7",
   "downloadUrl": "https://football-widget.vercel.app",
-  "releaseNotes": "Token-based update detection — only triggers when the update token is intentionally changed. No more false alarms from random commits.",
+  "releaseNotes": "Interactive first-run setup wizard with 7-step guide. Token-based update detection. Bug fixes.",
   "minimumVersion": "7.0.0"
 }
