@@ -13,23 +13,17 @@ function computeMascotState(match) {
 }
 
 export const useWidgetStore = create((set, get) => ({
-  // ── View ──────────────────────────────────────────────────────────────────
   viewMode: "wide",
   alwaysOnTop: false,
   panelOpen: false,
   widgetAiOpen: false,
   expandedMatchId: null,
   activeSubTab: "stats",
-
-  // ── Notifications ─────────────────────────────────────────────────────────
   notifications: [],
   showFollowedOnly: false,
   followedOnlyActive: false,
+  _prevFavScores: {},
 
-  // ── Favourite team goal match cache ───────────────────────────────────────
-  _prevFavScores: {}, // { matchId: { home, away } }
-
-  // ── DeepSeek Status ────────────────────────────────────────────────────────
   deepseekStatus: "Operational",
   deepseekPercentage: "99.94%",
   deepseekUsage: 0,
@@ -41,11 +35,9 @@ export const useWidgetStore = create((set, get) => ({
   }),
   deepseekUpdatedTime: "--:--",
   deepseekError: null,
-
-  // ── Data ──────────────────────────────────────────────────────────────────
-  rawMatches: [], // unfiltered original matches list
-  matches: [], // filtered + sorted upcoming + live (widget carousel)
-  recentMatches: [], // last 3 finished (panel only)
+  rawMatches: [],
+  matches: [],
+  recentMatches: [],
   currentMatchIndex: 0,
   currentMatch: null,
   mascotState: "sleep",
@@ -56,8 +48,6 @@ export const useWidgetStore = create((set, get) => ({
   isLoading: false,
   error: null,
   lastUpdated: null,
-
-  // ── Actions ───────────────────────────────────────────────────────────────
 
   setViewMode: (mode) => {
     set({ viewMode: mode });
@@ -118,8 +108,6 @@ export const useWidgetStore = create((set, get) => ({
     window.electronAPI?.setPanelOpen(next, viewMode);
   },
 
-  // ── Notification Actions ───────────────────────────────────────────────────
-
   addNotification: (notification) => {
     const { notifications } = get();
     // Keep max 5 toasts at a time, drop oldest if necessary
@@ -136,8 +124,6 @@ export const useWidgetStore = create((set, get) => ({
   },
 
   clearAllNotifications: () => set({ notifications: [] }),
-
-  // ── Followed-only Filter ───────────────────────────────────────────────────
 
   toggleShowFollowedOnly: () => {
     const { showFollowedOnly, rawMatches, customTheme } = get();
@@ -294,7 +280,6 @@ export const useWidgetStore = create((set, get) => ({
     });
   },
 
-  // ── Customizer / Theme State ──────────────────────────────────────────────
   customTheme: {
     borderRadius: "24px",
     defaultBgStart: "#2D2520",
@@ -479,7 +464,6 @@ export const useWidgetStore = create((set, get) => ({
   },
 }));
 
-// ── Helper to filter and sort matches based on user custom preference ───────
 function applyFiltersAndSorting(matches, theme, showFollowedOnly = false) {
   if (!matches) return [];
   let filtered = [...matches];

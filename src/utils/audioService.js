@@ -1,5 +1,3 @@
-// Chiptune Audio Service using Web Audio API
-
 let audioCtx = null;
 
 function getAudioContext() {
@@ -83,7 +81,6 @@ export function playSound(type, volume = 0.5) {
         osc.stop(ctx.currentTime + i * 0.15 + 0.25);
       });
     } else if (type === "deepseek-alert") {
-      // Low credits - two-tone alert (like a phone warning)
       [660, 880].forEach((freq, i) => {
         const osc = ctx.createOscillator();
         const g = ctx.createGain();
@@ -100,7 +97,6 @@ export function playSound(type, volume = 0.5) {
         osc.stop(ctx.currentTime + i * 0.15 + 0.3);
       });
     } else if (type === "notification-ping") {
-      // Standard notification ping - single clean tone
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
       osc.type = "sine";

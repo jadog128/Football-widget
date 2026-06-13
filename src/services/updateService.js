@@ -1,19 +1,3 @@
-/**
- * Update Check Service
- *
- * Compares a remote update token against the local known token.
- * When the remote token changes, an update is available.
- *
- * How to publish an update:
- *   1. Change the token in /update-token.txt at the repo root to a new random string
- *   2. Bump the version in /version.json
- *   3. Build and push
- *   4. The app will detect the token mismatch on its next poll
- *
- * The token is a long random string that NEVER changes unless we publish
- * an actual update. Random edits to other files won't trigger false alarms.
- */
-
 const VERSION_URL =
   "https://raw.githubusercontent.com/jadog128/Football-widget/main/version.json";
 

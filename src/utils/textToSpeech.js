@@ -1,5 +1,3 @@
-// Text-to-Speech Commentator Service
-
 export function speakEvent(text, volume = 0.5) {
   if (!window.speechSynthesis) return;
 
@@ -16,11 +14,12 @@ export function speakEvent(text, volume = 0.5) {
 
     // Look for a robotic or English voice if available
     const voices = window.speechSynthesis.getVoices();
-    const englishVoice = voices.find(
-      (v) =>
-        v.lang.startsWith("en") &&
-        (v.name.includes("Google") || v.name.includes("Natural"))
-    ) || voices.find((v) => v.lang.startsWith("en"));
+    const englishVoice =
+      voices.find(
+        (v) =>
+          v.lang.startsWith("en") &&
+          (v.name.includes("Google") || v.name.includes("Natural")),
+      ) || voices.find((v) => v.lang.startsWith("en"));
 
     if (englishVoice) {
       utterance.voice = englishVoice;

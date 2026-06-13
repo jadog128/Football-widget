@@ -79,7 +79,6 @@ export default function DeepseekStandalone() {
         onRefresh={handleRefresh}
       />
 
-      {/* Right-click context menu */}
       {menuPos && (
         <>
           <div

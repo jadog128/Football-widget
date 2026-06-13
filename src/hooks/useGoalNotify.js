@@ -1,21 +1,9 @@
-/**
- * useGoalNotify — watches the match list for state changes and fires
- * native system notifications via the Electron main process, plus
- * beautiful in-widget toast notifications for followed-team goals.
- *
- * Events detected:
- *   • Match kicks off (scheduled → live)
- *   • Goal scored (score increases) — custom toast if followed team
- *   • Full-time (live → finished)
- */
-
 import { useEffect, useRef } from "react";
 import { useWidgetStore } from "../store/widgetStore";
 import { playSound } from "../utils/audioService";
 import { speakEvent } from "../utils/textToSpeech";
 
 function sendToast(toastData) {
-  // Send to the floating toast window via IPC
   window.electronAPI?.showToast?.({ id: Date.now(), ...toastData });
 }
 
@@ -42,9 +30,8 @@ export function useGoalNotify() {
       });
 
       const p = prev.get(m.id);
-      if (!p) continue; // first time seeing this match
+      if (!p) continue;
 
-      // ── Kick off ─────────────────────────────────────────────────────────
       if (p.status === "scheduled" && m.status === "live") {
         if (soundEnabled) playSound("whistle", volume);
         if (speechEnabled) {
@@ -68,7 +55,6 @@ export function useGoalNotify() {
         continue;
       }
 
-      // ── Goals ─────────────────────────────────────────────────────────────
       if (m.status === "live") {
         if (homeScore > p.home) {
           const scorer = m.scorers
@@ -131,7 +117,6 @@ export function useGoalNotify() {
         }
       }
 
-      // ── Full time ─────────────────────────────────────────────────────────
       if (p.status === "live" && m.status === "finished") {
         if (soundEnabled) playSound("fulltime", volume);
         if (speechEnabled) {
