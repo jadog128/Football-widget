@@ -225,17 +225,25 @@
                 </div>
             </main>
 
+            <!-- Google Analytics -->
+            <script
+                async
+                src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+            ></script>
             <script>
-                window.va =
-                    window.va ||
-                    function () {
-                        (window.vaq = window.vaq || []).push(arguments);
-                    };
+                window.dataLayer = window.dataLayer || [];
+                function gtag() {
+                    dataLayer.push(arguments);
+                }
+                gtag("js", new Date());
+                gtag("config", "G-XXXXXXXXXX");
+
                 function trackDownload() {
                     try {
-                        window.va("event", {
-                            name: "download",
-                            data: { type: "installer", version: "7.9.5" },
+                        gtag("event", "download", {
+                            event_category: "installer",
+                            event_label: "V7.9.5",
+                            value: 1,
                         });
                     } catch (e) {}
                 }
