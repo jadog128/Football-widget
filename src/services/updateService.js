@@ -1,52 +1,42 @@
 /**
  * Update Check Service
  *
- * Periodically checks a hosted version.json for newer releases.
- * When a newer version is detected, fires a toast notification with
- * a download link to the Vercel landing page.
+ * Compares a remote update token against the local known token.
+ * When the remote token changes, an update is available.
  *
  * How to publish an update:
- *   1. Bump the "version" field in /version.json at the repo root
- *   2. Push to GitHub
- *   3. The app will detect the change on its next poll (every 6 hours)
+ *   1. Change the token in /update-token.txt at the repo root to a new random string
+ *   2. Bump the version in /version.json
+ *   3. Build and push
+ *   4. The app will detect the token mismatch on its next poll
+ *
+ * The token is a long random string that NEVER changes unless we publish
+ * an actual update. Random edits to other files won't trigger false alarms.
  */
 
-// ── Config ────────────────────────────────────────────────────────────────────
-
-// URL to the hosted version manifest. Update this to your Vercel/GitHub URL.
 const VERSION_URL =
   "https://raw.githubusercontent.com/jadog128/Football-widget/main/version.json";
 
-// How often to check for updates (milliseconds) — 6 hours
+const TOKEN_URL =
+  "https://raw.githubusercontent.com/jadog128/Football-widget/main/update-token.txt";
+
 const CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
 
-// Minimum interval between notifications for the same version (1 day)
-const NOTIFY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+// The current known token — matches update-token.txt in the repo root.
+// Only change this when publishing a real update.
+const CURRENT_TOKEN =
+  "a7f3b2c8e9d1f4a6b0c3e5f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7";
 
-// Current app version — injected at build time or falls back to package.json
-const APP_VERSION = "__APP_VERSION__";
-
-// ── Update check ──────────────────────────────────────────────────────────────
-
-/**
- * Compares two semver strings. Returns true if version a is newer than b.
- */
-function isNewerVersion(a, b) {
-  const pa = a.split(".").map(Number);
-  const pb = b.split(".").map(Number);
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const na = pa[i] || 0;
-    const nb = pb[i] || 0;
-    if (na > nb) return true;
-    if (na < nb) return false;
+async function fetchText(url) {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+    if (!res.ok) return null;
+    return await res.text();
+  } catch {
+    return null;
   }
-  return false;
 }
 
-/**
- * Fetches the remote version manifest and returns it.
- * Returns null on failure (offline, network error, etc.)
- */
 async function fetchVersionManifest() {
   try {
     const res = await fetch(VERSION_URL, {
@@ -60,55 +50,50 @@ async function fetchVersionManifest() {
 }
 
 /**
- * Checks for updates and returns update info if available.
- * @returns {{ available: boolean, version: string, downloadUrl: string, releaseNotes: string } | null}
+ * Checks for an update by comparing the remote token against the local one.
+ * Returns update info if available, or { available: false }.
  */
 export async function checkForUpdate() {
-  const manifest = await fetchVersionManifest();
-  if (!manifest || !manifest.version) return null;
+  const remoteToken = await fetchText(TOKEN_URL);
+  if (!remoteToken) return null;
 
-  const remoteVersion = manifest.version;
-  // Use a build-time injected version or fallback
-  const currentVersion = APP_VERSION.startsWith("__APP_")
-    ? "7.9.4"
-    : APP_VERSION;
+  const trimmed = remoteToken.trim();
+  const updateAvailable = trimmed !== CURRENT_TOKEN;
 
-  if (isNewerVersion(remoteVersion, currentVersion)) {
+  if (updateAvailable) {
+    const manifest = await fetchVersionManifest();
     return {
       available: true,
-      version: remoteVersion,
-      downloadUrl: manifest.downloadUrl || "https://football-widget.vercel.app",
-      releaseNotes: manifest.releaseNotes || "",
+      version: manifest?.version || "new",
+      downloadUrl:
+        manifest?.downloadUrl || "https://football-widget.vercel.app",
+      releaseNotes: manifest?.releaseNotes || "",
     };
   }
 
   return { available: false };
 }
 
-function buildUpdateNotification(update) {
-  return {
-    id: Date.now(),
-    type: "update",
-    scoringTeam: `Update v${update.version} Available`,
-    opponent: update.releaseNotes || "Click to download the latest version.",
-    homeScore: "⬇ Download",
-    awayScore: "",
-    competition: "Update",
-    status: "finished",
-    teamColor: "#E9A84A",
-    downloadUrl: update.downloadUrl,
-  };
-}
-
 /**
- * Manually check for updates and show a notification.
- * Returns the update result or null.
+ * Manually check and show a notification. Returns the update result or null.
  */
 export async function checkForUpdatesAndNotify(addNotification) {
   try {
     const update = await checkForUpdate();
     if (update?.available) {
-      addNotification(buildUpdateNotification(update));
+      addNotification({
+        id: Date.now(),
+        type: "update",
+        scoringTeam: `Update v${update.version} Available`,
+        opponent:
+          update.releaseNotes || "Click to download the latest version.",
+        homeScore: "⬇ Download",
+        awayScore: "",
+        competition: "Update",
+        status: "finished",
+        teamColor: "#E9A84A",
+        downloadUrl: update.downloadUrl,
+      });
       return update;
     }
     return null;
@@ -118,16 +103,14 @@ export async function checkForUpdatesAndNotify(addNotification) {
 }
 
 /**
- * Starts background update polling. Returns a cleanup function.
- * Fires a toast notification when an update is found.
+ * Starts background polling. Returns a cleanup function.
  */
 export function startUpdatePolling(addNotification) {
   let active = true;
-  let lastNotifiedVersion = null;
+  let lastNotifiedToken = null;
 
-  // Read last notified version from localStorage to avoid spam across restarts
   try {
-    lastNotifiedVersion = localStorage.getItem("updateNotifiedVersion");
+    lastNotifiedToken = localStorage.getItem("updateNotifiedToken");
   } catch {}
 
   const poll = async () => {
@@ -138,26 +121,35 @@ export function startUpdatePolling(addNotification) {
       if (!active) return;
 
       if (update?.available) {
-        // Only notify once per version
-        if (update.version !== lastNotifiedVersion) {
-          lastNotifiedVersion = update.version;
+        const remoteToken = (await fetchText(TOKEN_URL))?.trim() || "";
+        if (remoteToken && remoteToken !== lastNotifiedToken) {
+          lastNotifiedToken = remoteToken;
           try {
-            localStorage.setItem("updateNotifiedVersion", update.version);
+            localStorage.setItem("updateNotifiedToken", remoteToken);
           } catch {}
 
-          addNotification(buildUpdateNotification(update));
+          addNotification({
+            id: Date.now(),
+            type: "update",
+            scoringTeam: `Update v${update.version} Available`,
+            opponent:
+              update.releaseNotes || "Click to download the latest version.",
+            homeScore: "⬇ Download",
+            awayScore: "",
+            competition: "Update",
+            status: "finished",
+            teamColor: "#E9A84A",
+            downloadUrl: update.downloadUrl,
+          });
         }
       }
-    } catch {
-      // Silently retry next cycle
-    }
+    } catch {}
 
     if (active) {
       setTimeout(poll, CHECK_INTERVAL_MS);
     }
   };
 
-  // First check after a short delay so the app is fully loaded
   const initialTimer = setTimeout(poll, 30_000);
 
   return () => {
