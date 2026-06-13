@@ -1,6 +1,6 @@
 {
-  "version": "7.9.8",
+  "version": "7.9.9",
   "downloadUrl": "https://football-widget.vercel.app",
-  "releaseNotes": "Fixed match notifications — kickoff, goal, and full-time toasts now appear in the floating toast window for all matches.",
+  "releaseNotes": "24-hour update cooldown — skip intermediate versions and only get the latest. Match notifications now fire through the floating toast window.",
   "minimumVersion": "7.0.0"
 }
