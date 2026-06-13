@@ -1,5 +1,5 @@
 /**
- * WidgetWide  (490 × 185 px)
+ * WidgetWide  (540 × 200 px)
  */
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -10,6 +10,8 @@ import PixelMascot from "./PixelMascot";
 import PredictionBar from "./PredictionBar";
 import BroadcasterBadge from "./BroadcasterBadge";
 import TeamCrest from "./TeamCrest";
+import MatchTimeline from "./MatchTimeline";
+import { useMatchReminder } from "../hooks/useMatchReminder";
 
 function IconButton({ onClick, title, children }) {
   return (
@@ -58,7 +60,8 @@ function LiveBadge({ minute, score }) {
   return (
     <div className="flex items-center gap-[6px] font-serif-premium text-[15px] text-[#E05353] font-medium">
       <span className="text-[10px] leading-none animate-pulse-alert">●</span>
-      Live {hasScore ? `• ${score.home} – ${score.away}` : ""} {minute ? `(${minute}')` : ""}
+      Live {hasScore ? `• ${score.home} – ${score.away}` : ""}{" "}
+      {minute ? `(${minute}')` : ""}
     </div>
   );
 }
@@ -72,14 +75,16 @@ function MatchHeader({ m }) {
 
   return (
     <div className="flex-1 min-w-0 flex flex-col gap-[2px]">
-      <div 
+      <div
         className="flex items-center gap-2 font-serif-premium text-[16px] font-medium leading-none min-w-0"
         style={{ color: textColor }}
       >
         <TeamCrest logo={m.homeTeam.logo} name={m.homeTeam.name} size={18} />
-        <span className="truncate max-w-[130px]">{m.homeTeam.name}</span>
-        <span className="text-[11px] font-sans-premium text-[#8F7D74] font-normal px-[2px]">vs</span>
-        <span className="truncate max-w-[130px]">{m.awayTeam.name}</span>
+        <span className="truncate max-w-[14ch]">{m.homeTeam.name}</span>
+        <span className="text-[11px] font-sans-premium text-[#8F7D74] font-normal px-[2px]">
+          vs
+        </span>
+        <span className="truncate max-w-[14ch]">{m.awayTeam.name}</span>
         <TeamCrest logo={m.awayTeam.logo} name={m.awayTeam.name} size={18} />
       </div>
 
@@ -110,7 +115,10 @@ function MatchHeader({ m }) {
         {m.broadcaster && m.broadcaster !== "Not Televised" && (
           <>
             <span>·</span>
-            <BroadcasterBadge broadcaster={m.broadcaster} className="scale-90 origin-left" />
+            <BroadcasterBadge
+              broadcaster={m.broadcaster}
+              className="scale-90 origin-left"
+            />
           </>
         )}
       </div>
@@ -120,7 +128,14 @@ function MatchHeader({ m }) {
 
 // ── Typography reference helpers for utility ────────────────────────────────
 const T = {
-  comp: { fontFamily: 'Inter, sans-serif', fontSize: '9px', color: '#8F7D74', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '600' },
+  comp: {
+    fontFamily: "Inter, sans-serif",
+    fontSize: "9px",
+    color: "#8F7D74",
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+    fontWeight: "600",
+  },
 };
 
 function getWeatherDesc(code) {
@@ -159,9 +174,12 @@ export default function WidgetWide() {
     toggleWidgetAi,
     customTheme,
     setCustomTheme,
+    showFollowedOnly,
+    toggleShowFollowedOnly,
   } = useWidgetStore();
 
   const { refresh } = useFootballData();
+  const { reminders, setReminder, clearReminder } = useMatchReminder();
 
   const theme = customTheme || {};
 
@@ -186,7 +204,9 @@ export default function WidgetWide() {
       try {
         const lat = theme.weatherCoords?.lat ?? 51.5074;
         const lon = theme.weatherCoords?.lon ?? -0.1278;
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code`);
+        const res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code`,
+        );
         const data = await res.json();
         if (data?.current) {
           setWeather({
@@ -216,10 +236,10 @@ export default function WidgetWide() {
   // ── Loading ────────────────────────────────────────────────────────────────
   if (isLoading && matches.length === 0) {
     return (
-      <div 
+      <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="widget-card w-full flex-shrink-0 h-[185px] flex items-center justify-center drag-region relative"
+        className="widget-card w-full flex-shrink-0 h-[200px] flex items-center justify-center drag-region relative"
       >
         <PixelMascot state="idle" pixelSize={4} animate />
         <span
@@ -235,10 +255,10 @@ export default function WidgetWide() {
   // ── Error ──────────────────────────────────────────────────────────────────
   if (error && matches.length === 0) {
     return (
-      <div 
+      <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="widget-card w-full flex-shrink-0 h-[185px] flex flex-col items-center justify-center gap-2 drag-region p-4 relative"
+        className="widget-card w-full flex-shrink-0 h-[200px] flex flex-col items-center justify-center gap-2 drag-region p-4 relative"
       >
         <PixelMascot state="sleep" pixelSize={4} />
         <span
@@ -279,7 +299,7 @@ export default function WidgetWide() {
       <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="w-full flex-shrink-0 h-[185px] flex items-center justify-between px-6 drag-region relative border"
+        className="w-full flex-shrink-0 h-[200px] flex items-center justify-between px-6 drag-region relative border"
         style={cardStyle}
       >
         {/* Mascot */}
@@ -290,14 +310,16 @@ export default function WidgetWide() {
           {theme.utilityMode === "cpu" ? (
             <div className="flex flex-col gap-1">
               <span style={T.comp}>System Status</span>
-              
+
               <div className="flex flex-col gap-0.5">
                 <div className="flex justify-between text-[8px] text-[#8F7D74] font-bold font-mono">
                   <span>CPU LOAD</span>
                   <span>{sysInfo.cpu}%</span>
                 </div>
                 <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden flex">
-                  <div style={{ width: `${sysInfo.cpu}%`, background: '#E8744A' }} />
+                  <div
+                    style={{ width: `${sysInfo.cpu}%`, background: "#E8744A" }}
+                  />
                 </div>
               </div>
 
@@ -307,7 +329,9 @@ export default function WidgetWide() {
                   <span>{sysInfo.ram}%</span>
                 </div>
                 <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden flex">
-                  <div style={{ width: `${sysInfo.ram}%`, background: '#E9A84A' }} />
+                  <div
+                    style={{ width: `${sysInfo.ram}%`, background: "#E9A84A" }}
+                  />
                 </div>
               </div>
             </div>
@@ -338,6 +362,24 @@ export default function WidgetWide() {
 
         {/* Controls */}
         <div className="flex flex-col items-center gap-1 no-drag">
+          <button
+            onClick={toggleShowFollowedOnly}
+            title={
+              showFollowedOnly ? "Show all teams" : "Show followed teams only"
+            }
+            className={`w-6 h-6 flex items-center justify-center rounded-full transition-all duration-150 active:scale-90 text-[10px] font-bold cursor-pointer ${
+              showFollowedOnly
+                ? "text-[#E9A84A] bg-[#E9A84A]/15 shadow-[0_0_6px_rgba(233,168,74,0.25)]"
+                : "text-[#8F7D74] hover:text-w-text hover:bg-white/10"
+            }`}
+            style={
+              showFollowedOnly
+                ? { border: "1px solid rgba(233,168,74,0.3)" }
+                : {}
+            }
+          >
+            ★
+          </button>
           <IconButton onClick={togglePanel} title="All fixtures">
             ☰
           </IconButton>
@@ -347,7 +389,10 @@ export default function WidgetWide() {
           <IconButton onClick={cycleViewMode} title="Cycle view size">
             ⊡
           </IconButton>
-          <IconButton onClick={() => window.electronAPI?.openCustomizer?.()} title="Customize UI (⚙)">
+          <IconButton
+            onClick={() => window.electronAPI?.openCustomizer?.()}
+            title="Customize UI (⚙)"
+          >
             ⚙
           </IconButton>
         </div>
@@ -363,7 +408,9 @@ export default function WidgetWide() {
     background: isLive
       ? `linear-gradient(135deg, ${theme.alertBgStart || "#7E492F"} 0%, ${theme.alertBgEnd || "#3D2114"} 100%)`
       : `linear-gradient(135deg, ${theme.defaultBgStart || "#2D2520"} 0%, ${theme.defaultBgEnd || "#171311"} 100%)`,
-    borderColor: isLive ? "rgba(255, 120, 70, 0.25)" : "rgba(255, 255, 255, 0.08)",
+    borderColor: isLive
+      ? "rgba(255, 120, 70, 0.25)"
+      : "rgba(255, 255, 255, 0.08)",
   };
 
   const currentVote = theme.predictions?.[m.id] || null;
@@ -384,7 +431,7 @@ export default function WidgetWide() {
     <div
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`w-full flex-shrink-0 h-[178px] flex flex-col animate-fade-in relative bg-transparent`}
+      className={`w-full flex-shrink-0 h-[193px] flex flex-col animate-fade-in relative bg-transparent`}
     >
       {/* ── Top row ──────────────────────────────────────────────────────── */}
       <div className="flex items-center flex-1 px-5 pt-5 pb-2 drag-region gap-4 min-w-0">
@@ -399,17 +446,63 @@ export default function WidgetWide() {
 
         <MatchHeader m={m} />
 
+        {/* Remind button for upcoming */}
+        {m.status === "scheduled" && (
+          <button
+            onClick={() =>
+              reminders[m.id] ? clearReminder(m.id) : setReminder(m.id)
+            }
+            title={
+              reminders[m.id]
+                ? "Reminder set (notify 15min before)"
+                : "Set match reminder"
+            }
+            className={`no-drag w-5 h-5 flex items-center justify-center rounded-full transition-all duration-150 active:scale-90 text-[10px] cursor-pointer ${
+              reminders[m.id]
+                ? "text-[#E9A84A] bg-[#E9A84A]/15"
+                : "text-[#8F7D74] hover:text-w-text hover:bg-white/10"
+            }`}
+          >
+            🔔
+          </button>
+        )}
+
         <div className="absolute top-4 right-4 flex items-center gap-[4px] no-drag">
-          <IconButton onClick={() => toggleWidgetAi(m.id)} title="AI Commentary (💬)">
+          <IconButton
+            onClick={() => toggleWidgetAi(m.id)}
+            title="AI Commentary (💬)"
+          >
             💬
           </IconButton>
           <IconButton onClick={togglePanel} title="All fixtures (☰)">
             ☰
           </IconButton>
+          {/* Followed-only filter toggle */}
+          <button
+            onClick={toggleShowFollowedOnly}
+            title={
+              showFollowedOnly ? "Show all teams" : "Show followed teams only"
+            }
+            className={`no-drag w-6 h-6 flex items-center justify-center rounded-full transition-all duration-150 active:scale-90 text-[10px] font-bold cursor-pointer ${
+              showFollowedOnly
+                ? "text-[#E9A84A] bg-[#E9A84A]/15 shadow-[0_0_6px_rgba(233,168,74,0.25)]"
+                : "text-[#8F7D74] hover:text-w-text hover:bg-white/10"
+            }`}
+            style={
+              showFollowedOnly
+                ? { border: "1px solid rgba(233,168,74,0.3)" }
+                : {}
+            }
+          >
+            ★
+          </button>
           <IconButton onClick={cycleViewMode} title="Cycle view size">
             ⊡
           </IconButton>
-          <IconButton onClick={() => window.electronAPI?.openCustomizer?.()} title="Customize UI (⚙)">
+          <IconButton
+            onClick={() => window.electronAPI?.openCustomizer?.()}
+            title="Customize UI (⚙)"
+          >
             ⚙
           </IconButton>
           <IconButton onClick={refresh} title="Refresh">
@@ -431,6 +524,20 @@ export default function WidgetWide() {
           onVote={castVote}
         />
       </div>
+
+      {/* ── Match Timeline (live only) ────────────────────────────────────── */}
+      {isLive && m.scorers && m.scorers.length > 0 && (
+        <div className="px-5 pb-2">
+          <MatchTimeline
+            events={m.scorers.map((s) => ({
+              type: s.type || "goal",
+              minute: s.minute,
+              text: `${s.name} ${s.minute}'`,
+            }))}
+            liveMinute={m.liveMinute}
+          />
+        </div>
+      )}
 
       {/* ── Floating Navigation Arrows ───────────────────────────────────── */}
       {matches.length > 1 && (

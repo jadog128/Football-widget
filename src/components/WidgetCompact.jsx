@@ -56,11 +56,16 @@ export default function WidgetCompact() {
     togglePanel,
     toggleWidgetAi,
     customTheme,
+    showFollowedOnly,
+    toggleShowFollowedOnly,
   } = useWidgetStore();
 
   const { refresh } = useFootballData();
   const isLive = currentMatch?.status === "live";
-  const hasScore = isLive && currentMatch?.score?.home !== null && currentMatch?.score?.away !== null;
+  const hasScore =
+    isLive &&
+    currentMatch?.score?.home !== null &&
+    currentMatch?.score?.away !== null;
   const countdown = useCountdown(currentMatch?.kickoff, currentMatch?.status);
 
   const theme = customTheme || {};
@@ -100,7 +105,9 @@ export default function WidgetCompact() {
       try {
         const lat = theme.weatherCoords?.lat ?? 51.5074;
         const lon = theme.weatherCoords?.lon ?? -0.1278;
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code`);
+        const res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code`,
+        );
         const data = await res.json();
         if (data?.current) {
           setWeather({
@@ -118,7 +125,7 @@ export default function WidgetCompact() {
   // ── Loading ────────────────────────────────────────────────────────────────
   if (isLoading && matches.length === 0) {
     return (
-      <div 
+      <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className="widget-card w-full flex-shrink-0 h-[220px] flex flex-col items-center justify-center gap-3 drag-region"
@@ -162,7 +169,8 @@ export default function WidgetCompact() {
           <span
             style={{
               color: "#8F7D74",
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               fontSize: "8px",
               letterSpacing: "0.08em",
               textTransform: "uppercase",
@@ -172,13 +180,34 @@ export default function WidgetCompact() {
             Idle Utility
           </span>
           <div className="flex gap-[2px] no-drag">
+            <button
+              onClick={toggleShowFollowedOnly}
+              title={
+                showFollowedOnly ? "Show all teams" : "Show followed teams only"
+              }
+              className={`no-drag w-5 h-5 flex items-center justify-center rounded-full transition-all duration-150 active:scale-90 text-[8px] font-bold cursor-pointer ${
+                showFollowedOnly
+                  ? "text-[#E9A84A] bg-[#E9A84A]/15 shadow-[0_0_6px_rgba(233,168,74,0.25)]"
+                  : "text-[#8F7D74] hover:text-w-text hover:bg-white/10"
+              }`}
+              style={
+                showFollowedOnly
+                  ? { border: "1px solid rgba(233,168,74,0.3)" }
+                  : {}
+              }
+            >
+              ★
+            </button>
             <IconBtn onClick={togglePanel} title="All fixtures">
               ☰
             </IconBtn>
             <IconBtn onClick={cycleViewMode} title="Cycle view size">
               ⊞
             </IconBtn>
-            <IconBtn onClick={() => window.electronAPI?.openCustomizer?.()} title="Customize UI (⚙)">
+            <IconBtn
+              onClick={() => window.electronAPI?.openCustomizer?.()}
+              title="Customize UI (⚙)"
+            >
               ⚙
             </IconBtn>
             <IconBtn onClick={refresh} title="Refresh">
@@ -201,15 +230,19 @@ export default function WidgetCompact() {
                 <span>{sysInfo.cpu}%</span>
               </div>
               <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden flex">
-                <div style={{ width: `${sysInfo.cpu}%`, background: '#E8744A' }} />
+                <div
+                  style={{ width: `${sysInfo.cpu}%`, background: "#E8744A" }}
+                />
               </div>
-              
+
               <div className="flex justify-between font-bold text-[#8F7D74] mt-1">
                 <span>RAM</span>
                 <span>{sysInfo.ram}%</span>
               </div>
               <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden flex">
-                <div style={{ width: `${sysInfo.ram}%`, background: '#E9A84A' }} />
+                <div
+                  style={{ width: `${sysInfo.ram}%`, background: "#E9A84A" }}
+                />
               </div>
             </div>
           ) : theme.utilityMode === "weather" ? (
@@ -241,7 +274,9 @@ export default function WidgetCompact() {
     background: isLive
       ? `linear-gradient(135deg, ${theme.alertBgStart || "#7E492F"} 0%, ${theme.alertBgEnd || "#3D2114"} 100%)`
       : `linear-gradient(135deg, ${theme.defaultBgStart || "#2D2520"} 0%, ${theme.defaultBgEnd || "#171311"} 100%)`,
-    borderColor: isLive ? "rgba(255, 120, 70, 0.25)" : "rgba(255, 255, 255, 0.08)",
+    borderColor: isLive
+      ? "rgba(255, 120, 70, 0.25)"
+      : "rgba(255, 255, 255, 0.08)",
   };
 
   return (
@@ -255,7 +290,8 @@ export default function WidgetCompact() {
         <span
           style={{
             color: "#8F7D74",
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            fontFamily:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             fontSize: "8px",
             letterSpacing: "0.08em",
             textTransform: "uppercase",
@@ -265,16 +301,40 @@ export default function WidgetCompact() {
           {m.competition.shortName || m.competition.name}
         </span>
         <div className="flex gap-[2px] no-drag">
-          <IconBtn onClick={() => toggleWidgetAi(m.id)} title="AI Commentary (💬)">
+          <IconBtn
+            onClick={() => toggleWidgetAi(m.id)}
+            title="AI Commentary (💬)"
+          >
             💬
           </IconBtn>
+          <button
+            onClick={toggleShowFollowedOnly}
+            title={
+              showFollowedOnly ? "Show all teams" : "Show followed teams only"
+            }
+            className={`no-drag w-5 h-5 flex items-center justify-center rounded-full transition-all duration-150 active:scale-90 text-[8px] font-bold cursor-pointer ${
+              showFollowedOnly
+                ? "text-[#E9A84A] bg-[#E9A84A]/15 shadow-[0_0_6px_rgba(233,168,74,0.25)]"
+                : "text-[#8F7D74] hover:text-w-text hover:bg-white/10"
+            }`}
+            style={
+              showFollowedOnly
+                ? { border: "1px solid rgba(233,168,74,0.3)" }
+                : {}
+            }
+          >
+            ★
+          </button>
           <IconBtn onClick={togglePanel} title="All fixtures">
             ☰
           </IconBtn>
           <IconBtn onClick={cycleViewMode} title="Cycle view size">
             ⊞
           </IconBtn>
-          <IconBtn onClick={() => window.electronAPI?.openCustomizer?.()} title="Customize UI (⚙)">
+          <IconBtn
+            onClick={() => window.electronAPI?.openCustomizer?.()}
+            title="Customize UI (⚙)"
+          >
             ⚙
           </IconBtn>
           <IconBtn onClick={refresh} title="Refresh">
@@ -297,13 +357,15 @@ export default function WidgetCompact() {
       <div className="flex-1 flex flex-col items-center justify-center px-3 gap-[3px] drag-region pb-1">
         <div className="flex items-center gap-[6px] w-full justify-center">
           <TeamCrest logo={m.homeTeam.logo} name={m.homeTeam.name} size={18} />
-          <div 
+          <div
             className="font-serif-premium text-[13px] font-medium leading-none text-center flex items-center gap-[3px]"
             style={{ color: textColor }}
           >
-            <span className="truncate max-w-[55px]">{m.homeTeam.shortName}</span>
-            <span className="text-[10px] font-sans-premium text-[#8F7D74] font-normal px-[1px]">vs</span>
-            <span className="truncate max-w-[55px]">{m.awayTeam.shortName}</span>
+            <span className="truncate max-w-[8ch]">{m.homeTeam.shortName}</span>
+            <span className="text-[10px] font-sans-premium text-[#8F7D74] font-normal px-[1px]">
+              vs
+            </span>
+            <span className="truncate max-w-[8ch]">{m.awayTeam.shortName}</span>
           </div>
           <TeamCrest logo={m.awayTeam.logo} name={m.awayTeam.name} size={18} />
         </div>
@@ -311,11 +373,13 @@ export default function WidgetCompact() {
         {isLive ? (
           <div className="flex flex-col items-center gap-[1px]">
             <span className="font-serif-premium text-[12px] text-[#E05353] font-medium flex items-center gap-1">
-              <span className="text-[8px] leading-none animate-pulse-alert">●</span>
+              <span className="text-[8px] leading-none animate-pulse-alert">
+                ●
+              </span>
               Live {m.liveMinute ? `${m.liveMinute}'` : ""}
             </span>
             {hasScore && (
-              <span 
+              <span
                 className="font-serif-premium text-[14px] font-semibold tracking-wider"
                 style={{ color: textColor }}
               >
@@ -328,7 +392,7 @@ export default function WidgetCompact() {
             <span className="font-serif-premium text-[12px] text-[#A0886B] font-medium flex items-center gap-1">
               ● Full Time
             </span>
-            <span 
+            <span
               className="font-serif-premium text-[14px] font-semibold tracking-wider"
               style={{ color: textColor }}
             >
@@ -372,7 +436,8 @@ export default function WidgetCompact() {
                 style={{
                   width: i === currentMatchIndex ? "6px" : "4px",
                   height: i === currentMatchIndex ? "6px" : "4px",
-                  backgroundColor: i === currentMatchIndex ? accentColor : "#3D2E22",
+                  backgroundColor:
+                    i === currentMatchIndex ? accentColor : "#3D2E22",
                 }}
               />
             ))}

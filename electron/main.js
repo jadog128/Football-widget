@@ -29,7 +29,7 @@ const isDev = process.env.NODE_ENV === "development";
 const DEV_URL = "http://localhost:5173";
 
 const SIZES = {
-  wide: { width: 490, height: 185 },
+  wide: { width: 540, height: 200 },
   compact: { width: 210, height: 220 },
   mini: { width: 90, height: 95 },
 };
@@ -37,6 +37,9 @@ const PANEL_EXTRA_H = 390;
 
 let mainWindow = null;
 let customizerWindow = null;
+let deepseekWindow = null;
+let creditsWindow = null;
+let toastWindow = null;
 let tray = null;
 let currentOpacity = 100; // 40–100
 
@@ -190,10 +193,20 @@ function createWindow() {
   const prefs = loadPrefs();
   currentOpacity = prefs.opacity ?? 100;
 
+  const pinnedPos = prefs.pinnedPosition;
+  const initialX =
+    pinnedPos?.x != null
+      ? pinnedPos.x
+      : Math.max(0, sw - SIZES.wide.width - 20);
+  const initialY =
+    pinnedPos?.y != null
+      ? pinnedPos.y
+      : Math.max(0, sh - SIZES.wide.height - 20);
+
   mainWindow = new BrowserWindow({
     ...SIZES.wide,
-    x: Math.max(0, sw - SIZES.wide.width - 20),
-    y: Math.max(0, sh - SIZES.wide.height - 20),
+    x: initialX,
+    y: initialY,
 
     frame: false,
     transparent: true,
@@ -239,6 +252,201 @@ function createWindow() {
   });
 }
 
+// ── DeepSeek standalone window ───────────────────────────────────────────────
+
+function openDeepseekWindow() {
+  if (deepseekWindow) {
+    deepseekWindow.show();
+    deepseekWindow.focus();
+    return;
+  }
+
+  const prefs = loadPrefs();
+  const savedPos = prefs.deepseekPos || null;
+
+  deepseekWindow = new BrowserWindow({
+    width: 410,
+    height: 185,
+    x: savedPos?.x,
+    y: savedPos?.y,
+    frame: false,
+    transparent: true,
+    resizable: false,
+    movable: true,
+    skipTaskbar: false,
+    alwaysOnTop: false,
+    show: false,
+    backgroundColor: "#00000000",
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      nodeIntegration: false,
+      webSecurity: true,
+    },
+  });
+
+  if (isDev) {
+    deepseekWindow.loadURL(DEV_URL + "/#deepseek");
+  } else {
+    const idx = path.join(__dirname, "..", "app-dist", "index.html");
+    deepseekWindow.loadURL(`file://${idx}#deepseek`);
+  }
+
+  deepseekWindow.once("ready-to-show", () => {
+    deepseekWindow.show();
+  });
+
+  // Save position on move
+  deepseekWindow.on("moved", () => {
+    if (deepseekWindow && !deepseekWindow.isDestroyed()) {
+      const b = deepseekWindow.getBounds();
+      savePrefs({ deepseekPos: { x: b.x, y: b.y } });
+    }
+  });
+
+  deepseekWindow.on("closed", () => {
+    deepseekWindow = null;
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send("deepseek-window-closed");
+    }
+  });
+}
+
+function closeDeepseekWindow() {
+  if (deepseekWindow) {
+    deepseekWindow.close();
+    deepseekWindow = null;
+  }
+}
+
+// ── Credits standalone window ────────────────────────────────────────────────
+
+function openCreditsWindow() {
+  if (creditsWindow) {
+    creditsWindow.show();
+    creditsWindow.focus();
+    return;
+  }
+
+  const prefs = loadPrefs();
+  const savedPos = prefs.creditsPos || null;
+
+  creditsWindow = new BrowserWindow({
+    width: 185,
+    height: 185,
+    x: savedPos?.x,
+    y: savedPos?.y,
+    frame: false,
+    transparent: true,
+    resizable: false,
+    movable: true,
+    skipTaskbar: false,
+    alwaysOnTop: false,
+    show: false,
+    backgroundColor: "#00000000",
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      nodeIntegration: false,
+      webSecurity: true,
+    },
+  });
+
+  if (isDev) {
+    creditsWindow.loadURL(DEV_URL + "/#credits");
+  } else {
+    const idx = path.join(__dirname, "..", "app-dist", "index.html");
+    creditsWindow.loadURL(`file://${idx}#credits`);
+  }
+
+  creditsWindow.once("ready-to-show", () => {
+    creditsWindow.show();
+  });
+
+  // Save position on move
+  creditsWindow.on("moved", () => {
+    if (creditsWindow && !creditsWindow.isDestroyed()) {
+      const b = creditsWindow.getBounds();
+      savePrefs({ creditsPos: { x: b.x, y: b.y } });
+    }
+  });
+
+  creditsWindow.on("closed", () => {
+    creditsWindow = null;
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send("credits-window-closed");
+    }
+  });
+}
+
+function closeCreditsWindow() {
+  if (creditsWindow) {
+    creditsWindow.close();
+    creditsWindow = null;
+  }
+}
+
+// ── Toast notification window ─────────────────────────────────────────────────
+
+function openToastWindow() {
+  if (toastWindow && !toastWindow.isDestroyed()) {
+    toastWindow.show();
+    toastWindow.focus();
+    return;
+  }
+
+  const { width: sw } = screen.getPrimaryDisplay().workAreaSize;
+
+  toastWindow = new BrowserWindow({
+    width: 360,
+    height: 160,
+    x: sw - 380,
+    y: 10,
+    frame: false,
+    transparent: true,
+    resizable: false,
+    movable: false,
+    skipTaskbar: true,
+    alwaysOnTop: true,
+    show: false,
+    focusable: false,
+    backgroundColor: "#00000000",
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      nodeIntegration: false,
+      webSecurity: true,
+    },
+  });
+
+  // Don't show in taskbar, don't steal focus
+  toastWindow.setSkipTaskbar(true);
+
+  if (isDev) {
+    toastWindow.loadURL(DEV_URL + "/#toast");
+  } else {
+    const idx = path.join(__dirname, "..", "app-dist", "index.html");
+    toastWindow.loadURL(`file://${idx}#toast`);
+  }
+
+  toastWindow.once("ready-to-show", () => {
+    toastWindow.setAlwaysOnTop(true, "pop-up-menu"); // highest on-top level
+    toastWindow.setIgnoreMouseEvents(true, { forward: true }); // clicks pass through
+    toastWindow.showInactive(); // show without stealing focus
+  });
+
+  toastWindow.on("closed", () => {
+    toastWindow = null;
+  });
+}
+
+function closeToastWindow() {
+  if (toastWindow && !toastWindow.isDestroyed()) {
+    toastWindow.close();
+    toastWindow = null;
+  }
+}
+
 // ── Tray ──────────────────────────────────────────────────────────────────────
 
 function openCustomizerWindow() {
@@ -259,7 +467,7 @@ function openCustomizerWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
-      webSecurity: false,
+      webSecurity: true,
     },
   });
 
@@ -362,7 +570,8 @@ function createTray() {
 function registerShortcuts() {
   try {
     const prefs = loadPrefs();
-    const shortcut = prefs.customTheme?.globalShortcut || "CommandOrControl+Shift+F";
+    const shortcut =
+      prefs.customTheme?.globalShortcut || "CommandOrControl+Shift+F";
 
     globalShortcut.unregisterAll();
 
@@ -375,11 +584,15 @@ function registerShortcuts() {
       savePrefs({ customTheme: updatedTheme });
 
       if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send("prefs-updated", { customTheme: updatedTheme });
+        mainWindow.webContents.send("prefs-updated", {
+          customTheme: updatedTheme,
+        });
         mainWindow.setIgnoreMouseEvents(ghost, { forward: true });
       }
       if (customizerWindow && !customizerWindow.isDestroyed()) {
-        customizerWindow.webContents.send("prefs-updated", { customTheme: updatedTheme });
+        customizerWindow.webContents.send("prefs-updated", {
+          customTheme: updatedTheme,
+        });
       }
       log("Ghost Mode toggled via shortcut to:", ghost);
     });
@@ -416,10 +629,25 @@ function registerIpcHandlers() {
   ipcMain.on("set-window-position", (_e, { x, y }) => {
     if (mainWindow) mainWindow.setPosition(Math.round(x), Math.round(y));
   });
-  ipcMain.on("open-url", (_e, url) => shell.openExternal(url));
   ipcMain.handle("get-window-bounds", () =>
     mainWindow ? mainWindow.getBounds() : null,
   );
+
+  // Pin widget to current position
+  ipcMain.on("pin-widget", () => {
+    if (!mainWindow) return;
+    const b = mainWindow.getBounds();
+    savePrefs({ pinnedPosition: { x: b.x, y: b.y } });
+    mainWindow.webContents.send("pinned-status-changed", true);
+  });
+  ipcMain.on("unpin-widget", () => {
+    savePrefs({ pinnedPosition: null });
+    if (mainWindow) mainWindow.webContents.send("pinned-status-changed", false);
+  });
+  ipcMain.handle("get-pinned-status", () => {
+    const prefs = loadPrefs();
+    return prefs.pinnedPosition != null;
+  });
 
   // Panel expand/collapse — window grows downward, widget stays anchored top
   ipcMain.on("set-panel-open", (_e, { open, mode }) => {
@@ -446,11 +674,14 @@ function registerIpcHandlers() {
   });
 
   // Native system notification (fired by renderer on goal / kick-off)
-  ipcMain.on("show-notification", (_e, { title, body, icon }) => {
+  ipcMain.on("show-notification", (_e, { title, body }) => {
     try {
-      if (Notification.isSupported()) {
-        new Notification({ title, body, silent: false }).show();
-      }
+      const n = new Notification({
+        title: title || "Football Widget",
+        body: body || "",
+        silent: false,
+      });
+      n.show();
     } catch (e) {
       log("notification error:", e.message);
     }
@@ -461,6 +692,48 @@ function registerIpcHandlers() {
     applyOpacity(Math.max(40, Math.min(100, pct))),
   );
 
+  // DeepSeek standalone window
+  ipcMain.on("open-deepseek-widget", () => openDeepseekWindow());
+  ipcMain.on("close-deepseek-widget", () => closeDeepseekWindow());
+  ipcMain.handle("get-deepseek-widget-open", () => deepseekWindow !== null);
+
+  // Credits standalone window
+  ipcMain.on("open-credits-widget", () => openCreditsWindow());
+  ipcMain.on("close-credits-widget", () => closeCreditsWindow());
+  ipcMain.handle("get-credits-widget-open", () => creditsWindow !== null);
+
+  // Toast notification window IPC
+  ipcMain.on("open-toast-widget", () => openToastWindow());
+  ipcMain.on("close-toast-widget", () => closeToastWindow());
+  ipcMain.on("resize-toast-widget", (_e, height) => {
+    if (toastWindow && !toastWindow.isDestroyed()) {
+      const b = toastWindow.getBounds();
+      toastWindow.setBounds({ ...b, height: Math.max(120, height) }, true);
+    }
+  });
+  // Let clicks pass through empty areas of the toast window
+  ipcMain.on("toast-set-ignore-mouse", (_e, ignore) => {
+    if (toastWindow && !toastWindow.isDestroyed()) {
+      toastWindow.setIgnoreMouseEvents(ignore, { forward: true });
+    }
+  });
+
+  // Store pending toast data for the toast window to pick up
+  let pendingToastData = null;
+
+  // Broadcast toast + open floating toast window
+  ipcMain.on("show-toast", (_e, toastData) => {
+    pendingToastData = toastData;
+    openToastWindow();
+  });
+
+  // Toast window calls this after mounting to grab pending toast
+  ipcMain.handle("get-pending-toast", () => {
+    const data = pendingToastData;
+    pendingToastData = null;
+    return data;
+  });
+
   // Customizer preferences IPC
   ipcMain.handle("get-prefs", () => {
     return loadPrefs();
@@ -468,23 +741,31 @@ function registerIpcHandlers() {
 
   ipcMain.on("save-prefs", (_e, prefs) => {
     savePrefs(prefs);
-    
+
     // If globalShortcut or ghostMode changed, apply it immediately
     if (prefs.customTheme) {
       if (prefs.customTheme.globalShortcut) {
         registerShortcuts();
       }
       if (mainWindow && prefs.customTheme.ghostModeEnabled !== undefined) {
-        mainWindow.setIgnoreMouseEvents(prefs.customTheme.ghostModeEnabled, { forward: true });
+        mainWindow.setIgnoreMouseEvents(prefs.customTheme.ghostModeEnabled, {
+          forward: true,
+        });
       }
     }
 
-    // Broadcast preferences updates to both windows
+    // Broadcast preferences updates to all windows
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send("prefs-updated", prefs);
     }
     if (customizerWindow && !customizerWindow.isDestroyed()) {
       customizerWindow.webContents.send("prefs-updated", prefs);
+    }
+    if (creditsWindow && !creditsWindow.isDestroyed()) {
+      creditsWindow.webContents.send("prefs-updated", prefs);
+    }
+    if (deepseekWindow && !deepseekWindow.isDestroyed()) {
+      deepseekWindow.webContents.send("prefs-updated", prefs);
     }
   });
 
@@ -575,19 +856,25 @@ function registerIpcHandlers() {
       else if (edge === "top") ny = -bounds.height + 8;
       else if (edge === "bottom") ny = sh - 8;
 
-      mainWindow.setBounds({
-        x: Math.round(nx),
-        y: Math.round(ny),
-        width: bounds.width,
-        height: bounds.height
-      }, true);
+      mainWindow.setBounds(
+        {
+          x: Math.round(nx),
+          y: Math.round(ny),
+          width: bounds.width,
+          height: bounds.height,
+        },
+        true,
+      );
     } else if (action === "show" && mainWindow.__originalBounds) {
-      mainWindow.setBounds({
-        x: Math.round(mainWindow.__originalBounds.x),
-        y: Math.round(mainWindow.__originalBounds.y),
-        width: bounds.width,
-        height: bounds.height
-      }, true);
+      mainWindow.setBounds(
+        {
+          x: Math.round(mainWindow.__originalBounds.x),
+          y: Math.round(mainWindow.__originalBounds.y),
+          width: bounds.width,
+          height: bounds.height,
+        },
+        true,
+      );
       mainWindow.__originalBounds = null;
     }
   });
@@ -617,7 +904,8 @@ function registerIpcHandlers() {
     const idleDiff = totalIdle - lastIdle;
     const totalDiff = totalTick - lastTotal;
 
-    const cpuUsage = totalDiff > 0 ? Math.round((1 - idleDiff / totalDiff) * 100) : 0;
+    const cpuUsage =
+      totalDiff > 0 ? Math.round((1 - idleDiff / totalDiff) * 100) : 0;
 
     return {
       cpu: Math.max(0, Math.min(100, cpuUsage)),
@@ -625,51 +913,124 @@ function registerIpcHandlers() {
     };
   });
 
-  ipcMain.handle("ask-ai-about-game", async (_e, { home, away, comp, status, score, scorers, userPrompt }) => {
-    const prefs = loadPrefs();
-    const customTheme = prefs.customTheme || {};
-    const geminiKey = customTheme.geminiKey;
-    const openrouterKey = customTheme.openrouterKey;
+  ipcMain.handle(
+    "ask-ai-about-game",
+    async (_e, { home, away, comp, status, score, scorers, userPrompt }) => {
+      const prefs = loadPrefs();
+      const customTheme = prefs.customTheme || {};
+      const geminiKey = customTheme.geminiKey;
+      const openrouterKey = customTheme.openrouterKey;
 
-    if (!geminiKey && !openrouterKey) {
-      return "No API key found. Please configure your Gemini or OpenRouter key in the Settings Dashboard!";
-    }
+      if (!geminiKey && !openrouterKey) {
+        return "No API key found. Please configure your Gemini or OpenRouter key in the Settings Dashboard!";
+      }
 
-    const systemPrompt = "You are a helpful and knowledgeable AI assistant. Provide quick, direct, and clear answers. Do not use any commentary or game persona. Keep answers brief (under 80 words).";
-    const matchContextStr = `${home} vs ${away} (${comp}, Status: ${status}, Score: ${score?.home ?? 0}-${score?.away ?? 0})`;
-    const prompt = userPrompt
-      ? `The user is looking at ${matchContextStr} and is asking this question: ${userPrompt}`
-      : `Provide a quick match analysis/prediction for:
+      const systemPrompt =
+        "You are a helpful and knowledgeable AI assistant. Provide quick, direct, and clear answers. Do not use any commentary or game persona. Keep answers brief (under 80 words).";
+      const matchContextStr = `${home} vs ${away} (${comp}, Status: ${status}, Score: ${score?.home ?? 0}-${score?.away ?? 0})`;
+      const prompt = userPrompt
+        ? `The user is looking at ${matchContextStr} and is asking this question: ${userPrompt}`
+        : `Provide a quick match analysis/prediction for:
 Match: ${home} vs ${away} (${comp})
 Status: ${status}, Score: ${score?.home ?? 0} - ${score?.away ?? 0}
 Scorers: ${JSON.stringify(scorers || [])}
 Keep it short and hyper-focused!`;
 
-    try {
-      if (geminiKey) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
-        const response = await axios.post(url, {
-          contents: [{ parts: [{ text: systemPrompt + "\n" + prompt }] }]
-        });
-        return response.data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "API Error: No response data.";
-      } else if (openrouterKey) {
-        const response = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
-          model: "google/gemini-2.5-flash",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: prompt }
-          ]
-        }, {
-          headers: {
-            "Authorization": `Bearer ${openrouterKey}`,
-            "Content-Type": "application/json"
-          }
-        });
-        return response.data?.choices?.[0]?.message?.content ?? "API Error: No response data.";
+      try {
+        if (geminiKey) {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
+          const response = await axios.post(url, {
+            contents: [{ parts: [{ text: systemPrompt + "\n" + prompt }] }],
+          });
+          return (
+            response.data?.candidates?.[0]?.content?.parts?.[0]?.text ??
+            "API Error: No response data."
+          );
+        } else if (openrouterKey) {
+          const response = await axios.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            {
+              model: "google/gemini-2.5-flash",
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: prompt },
+              ],
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${openrouterKey}`,
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          return (
+            response.data?.choices?.[0]?.message?.content ??
+            "API Error: No response data."
+          );
+        }
+      } catch (err) {
+        log("AI API Call Error:", err.message);
+        return `Failed to fetch AI analysis: ${err.response?.data?.error?.message || err.message}`;
       }
+    },
+  );
+
+  // ── DeepSeek Token Usage ───────────────────────────────────────────────────────
+
+  /**
+   * Fetches DeepSeek developer billing usage from the DeepSeek API.
+   * The user's DeepSeek API key is stored in prefs.customTheme.deepseekApiKey.
+   *
+   * Endpoint: GET https://api.deepseek.com/dashboard/billing/usage
+   * Calculates total cost in USD from the returned token usage data.
+   */
+  ipcMain.handle("get-deepseek-usage", async () => {
+    const prefs = loadPrefs();
+    const customTheme = prefs?.customTheme || {};
+    const apiKey = customTheme.deepseekApiKey;
+    const creditLimit = customTheme.deepseekCreditLimit ?? 10.0;
+
+    if (!apiKey) {
+      return { usage: 0, creditLimit };
+    }
+
+    try {
+      // Fetch current month usage from DeepSeek billing API
+      const usageResponse = await axios.get(
+        "https://api.deepseek.com/dashboard/billing/usage",
+        {
+          params: {
+            start_date: new Date(
+              new Date().getFullYear(),
+              new Date().getMonth(),
+              1,
+            )
+              .toISOString()
+              .split("T")[0],
+            end_date: new Date().toISOString().split("T")[0],
+          },
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            Accept: "application/json",
+          },
+          timeout: 10_000,
+        },
+      );
+
+      let totalUsd = 0;
+      if (
+        usageResponse.data &&
+        typeof usageResponse.data.total_usage === "number"
+      ) {
+        // DeepSeek returns total_usage as a decimal — it's already in the API's
+        // token-cost unit. Divide by 1,000,000 to get approximate USD.
+        totalUsd = Math.max(0, usageResponse.data.total_usage / 1_000_000);
+      }
+
+      return { usage: totalUsd, creditLimit };
     } catch (err) {
-      log("AI API Call Error:", err.message);
-      return `Failed to fetch AI analysis: ${err.response?.data?.error?.message || err.message}`;
+      log("get-deepseek-usage error:", err.message);
+      return { usage: 0, creditLimit };
     }
   });
 }
@@ -688,6 +1049,11 @@ app
   .whenReady()
   .then(() => {
     log(`app ready | v${app.getVersion()} | packaged:${app.isPackaged}`);
+
+    // Required for native Windows notifications to work
+    if (process.platform === "win32") {
+      app.setAppUserModelId("FootballWidget");
+    }
 
     createWindow();
     createTray();

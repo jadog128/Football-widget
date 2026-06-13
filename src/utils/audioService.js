@@ -48,60 +48,69 @@ export function playSound(type, volume = 0.5) {
 
       lfo.stop(ctx.currentTime + 0.35);
       osc.stop(ctx.currentTime + 0.35);
-
     } else if (type === "fanfare") {
-      // Goal celebration fanfare (arpeggio)
-      const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50]; // C4, E4, G4, C5, E5, G5, C6
-      notes.forEach((freq, idx) => {
+      // Goal notification - clean two-tone chime
+      [880, 1100].forEach((freq, i) => {
         const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = "square";
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
-
-        gain.gain.setValueAtTime(0.25, ctx.currentTime + idx * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + idx * 0.08 + 0.15);
-
-        osc.connect(gain);
-        gain.connect(masterGain);
-
-        osc.start(ctx.currentTime + idx * 0.08);
-        osc.stop(ctx.currentTime + idx * 0.08 + 0.18);
-      });
-
-    } else if (type === "fulltime") {
-      // Tricolor whistle (short, short, long)
-      const playWhistle = (startTime, duration, freq) => {
-        const osc = ctx.createOscillator();
-        const lfo = ctx.createOscillator();
-        const lfoGain = ctx.createGain();
-        const gain = ctx.createGain();
-
+        const g = ctx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, startTime);
-
-        lfo.type = "sine";
-        lfo.frequency.setValueAtTime(35, startTime);
-        lfoGain.gain.setValueAtTime(200, startTime);
-
-        gain.gain.setValueAtTime(0, startTime);
-        gain.gain.linearRampToValueAtTime(0.8, startTime + 0.02);
-        gain.gain.linearRampToValueAtTime(0, startTime + duration);
-
-        lfo.connect(lfoGain);
-        lfoGain.connect(osc.frequency);
-        osc.connect(gain);
-        gain.connect(masterGain);
-
-        lfo.start(startTime);
-        osc.start(startTime);
-        lfo.stop(startTime + duration);
-        osc.stop(startTime + duration);
-      };
-
-      playWhistle(ctx.currentTime + 0.0, 0.15, 900);
-      playWhistle(ctx.currentTime + 0.2, 0.15, 900);
-      playWhistle(ctx.currentTime + 0.4, 0.45, 1100);
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.1);
+        g.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.1);
+        g.gain.exponentialRampToValueAtTime(
+          0.001,
+          ctx.currentTime + i * 0.1 + 0.3,
+        );
+        osc.connect(g);
+        g.connect(masterGain);
+        osc.start(ctx.currentTime + i * 0.1);
+        osc.stop(ctx.currentTime + i * 0.1 + 0.35);
+      });
+    } else if (type === "fulltime") {
+      // Full time - three short descending beeps
+      [800, 700, 600].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+        g.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.15);
+        g.gain.exponentialRampToValueAtTime(
+          0.001,
+          ctx.currentTime + i * 0.15 + 0.2,
+        );
+        osc.connect(g);
+        g.connect(masterGain);
+        osc.start(ctx.currentTime + i * 0.15);
+        osc.stop(ctx.currentTime + i * 0.15 + 0.25);
+      });
+    } else if (type === "deepseek-alert") {
+      // Low credits - two-tone alert (like a phone warning)
+      [660, 880].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+        g.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+        g.gain.exponentialRampToValueAtTime(
+          0.001,
+          ctx.currentTime + i * 0.15 + 0.25,
+        );
+        osc.connect(g);
+        g.connect(masterGain);
+        osc.start(ctx.currentTime + i * 0.15);
+        osc.stop(ctx.currentTime + i * 0.15 + 0.3);
+      });
+    } else if (type === "notification-ping") {
+      // Standard notification ping - single clean tone
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1000, ctx.currentTime);
+      g.gain.setValueAtTime(0.15, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+      osc.connect(g);
+      g.connect(masterGain);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.25);
     }
   } catch (err) {
     console.error("Failed to play synthesis sound:", err);

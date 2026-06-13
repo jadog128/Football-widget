@@ -1,106 +1,225 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ── Reset ─────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-html, body, #root {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: transparent;
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: transparent;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  user-select: none;
-  cursor: default;
+    font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+    cursor: default;
 }
 
 /* ── Premium Typography ─────────────────────────────────── */
 .font-serif-premium {
-  font-family: 'Lora', Georgia, serif;
+    font-family: "Lora", Georgia, serif;
 }
 
 .font-sans-premium {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
 }
 
 /* ── Electron window drag regions ───────────────────────── */
-.drag-region  { -webkit-app-region: drag;    }
-.no-drag      { -webkit-app-region: no-drag; }
+.drag-region {
+    -webkit-app-region: drag;
+}
+.no-drag {
+    -webkit-app-region: no-drag;
+}
 
 /* ── Pixel-perfect SVG rendering ───────────────────────── */
 .pixel-render {
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 
 /* ── Widget glass card ──────────────────────────────────── */
 .widget-card {
-  border-radius: 24px;
-  background: linear-gradient(135deg, #2D2520 0%, #171311 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+    border-radius: 24px;
+    background: linear-gradient(135deg, #2d2520 0%, #171311 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .widget-card-alert {
-  border-radius: 24px;
-  background: linear-gradient(135deg, #7E492F 0%, #3D2114 100%);
-  border: 1px solid rgba(255, 120, 70, 0.25);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+    border-radius: 24px;
+    background: linear-gradient(135deg, #7e492f 0%, #3d2114 100%);
+    border: 1px solid rgba(255, 120, 70, 0.25);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 /* ── Inner divider ──────────────────────────────────────── */
 .widget-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.06) 70%, transparent 100%);
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.06) 30%,
+        rgba(255, 255, 255, 0.06) 70%,
+        transparent 100%
+    );
 }
 
 /* ── Status dot ─────────────────────────────────────────── */
 .status-dot {
-  @apply inline-block w-2 h-2 rounded-full;
+    @apply inline-block w-2 h-2 rounded-full;
 }
 
 /* ── Prediction bar cells ───────────────────────────────── */
 .pred-cell {
-  flex: 1;
-  height: 8px;
-  border-radius: 2px;
+    flex: 1;
+    height: 8px;
+    border-radius: 2px;
 }
 
 /* ── ZZZ sleep bubbles ──────────────────────────────────── */
 .zzz-bubble {
-  position: absolute;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  color: #A0886B;
-  animation: zzz 2s ease-in-out infinite;
-  pointer-events: none;
+    position: absolute;
+    font-family: "Press Start 2P", monospace;
+    font-size: 8px;
+    color: #a0886b;
+    animation: zzz 2s ease-in-out infinite;
+    pointer-events: none;
 }
-.zzz-bubble:nth-child(2) { animation-delay: 0.7s; font-size: 10px; }
-.zzz-bubble:nth-child(3) { animation-delay: 1.4s; font-size: 12px; }
+.zzz-bubble:nth-child(2) {
+    animation-delay: 0.7s;
+    font-size: 10px;
+}
+.zzz-bubble:nth-child(3) {
+    animation-delay: 1.4s;
+    font-size: 12px;
+}
 
 /* ── Alert icon bounce ──────────────────────────────────── */
 @keyframes alertBounce {
-  0%,100% { transform: translateY(0);    }
-  20%     { transform: translateY(-6px); }
-  40%     { transform: translateY(0);    }
-  60%     { transform: translateY(-3px); }
-  80%     { transform: translateY(0);    }
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    20% {
+        transform: translateY(-6px);
+    }
+    40% {
+        transform: translateY(0);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+    80% {
+        transform: translateY(0);
+    }
 }
-.alert-bounce { animation: alertBounce 2s ease-in-out infinite; }
+.alert-bounce {
+    animation: alertBounce 2s ease-in-out infinite;
+}
 
 /* ── Scrollbar ──────────────────────────────────────────── */
-::-webkit-scrollbar         { width: 3px; }
-::-webkit-scrollbar-track   { background: transparent; }
-::-webkit-scrollbar-thumb   { background: #3D2E22; border-radius: 2px; }
+::-webkit-scrollbar {
+    width: 3px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #3d2e22;
+    border-radius: 2px;
+}
+
+/* ── Toast notification animations ─────────────────────────── */
+@keyframes toastShrink {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+@keyframes toastPulse {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes toastGoalPop {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ── Weather widget animations ──────────────────────────── */
+@keyframes weatherGradientShift {
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes weatherRain {
+    0% {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(200px);
+        opacity: 0;
+    }
+}
