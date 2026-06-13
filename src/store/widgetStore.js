@@ -334,9 +334,6 @@ export const useWidgetStore = create((set, get) => ({
     weatherCity: "London",
     weatherCoords: { lat: 51.5074, lon: -0.1278 },
 
-    // Setup wizard
-    setupComplete: false,
-
     // DeepSeek Status Widget
     deepseekWidgetEnabled: false,
     deepseekApiKey: "",

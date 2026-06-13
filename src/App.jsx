@@ -8,7 +8,6 @@ import WidgetCompact from "./components/WidgetCompact";
 import WidgetMini from "./components/WidgetMini";
 import MatchPanel from "./components/MatchPanel";
 import WidgetAiChatbox from "./components/WidgetAiChatbox";
-import SetupWizard from "./components/SetupWizard";
 // ToastNotification removed — toasts now appear in the floating notification window
 
 export default function App() {
@@ -31,20 +30,6 @@ export default function App() {
   const [menuPos, setMenuPos] = useState(null);
   const [deepseekOpen, setDeepseekOpen] = useState(false);
   const [creditsOpen, setCreditsOpen] = useState(false);
-  const [showSetup, setShowSetup] = useState(false);
-
-  // First-run setup wizard check
-  useEffect(() => {
-    if (customTheme && !customTheme.setupComplete) {
-      setShowSetup(true);
-    }
-  }, [customTheme]);
-
-  const handleSetupComplete = useCallback(() => {
-    setShowSetup(false);
-    setCustomTheme({ setupComplete: true });
-  }, [setCustomTheme]);
-
   // Background update checker
   useEffect(() => {
     const cleanup = startUpdatePolling(addNotification);
@@ -195,8 +180,6 @@ export default function App() {
       style={cardStyle}
       onContextMenu={handleContextMenu}
     >
-      {showSetup && <SetupWizard onComplete={handleSetupComplete} />}
-
       {viewMode === "wide" && <WidgetWide />}
       {viewMode === "compact" && <WidgetCompact />}
       {viewMode === "mini" && <WidgetMini />}
