@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Football Widget — Desktop Companion</title>
+
         <!-- Google tag (gtag.js) -->
         <script
             async
@@ -14,253 +18,1211 @@
             gtag("js", new Date());
             gtag("config", "G-HHET5F78SR");
         </script>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Football Widget — Desktop Companion</title>
-        <style>
-            :root {
-                --bg-start: #2d2520;
-                --bg-end: #171311;
-                --text-color: #f5e6d3;
-                --accent-color: #e9a84a;
-                --accent-hover: #f1b96a;
-                --card-bg: rgba(255, 255, 255, 0.03);
-                --border-color: rgba(255, 255, 255, 0.08);
-            }
 
-            * {
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            *,
+            *::before,
+            *::after {
                 box-sizing: border-box;
                 margin: 0;
                 padding: 0;
             }
 
+            :root {
+                --cream-50: #faf7f2;
+                --cream-100: #f5f0e8;
+                --cream-200: #ede4d6;
+                --cream-300: #d4c5b5;
+                --clay-400: #b8a08e;
+                --clay-500: #9a8472;
+                --clay-600: #7a6858;
+                --clay-700: #5a4a3e;
+                --clay-800: #3d322a;
+                --clay-900: #241e1a;
+                --accent: #c67d4e;
+                --accent-hover: #b06e44;
+                --green: #52b788;
+                --white: #ffffff;
+                --font-sans:
+                    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    system-ui, sans-serif;
+                --font-display: "Playfair Display", Georgia, serif;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
             body {
-                font-family:
-                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                    Helvetica, Arial, sans-serif;
-                background: linear-gradient(
-                    135deg,
-                    var(--bg-start) 0%,
-                    var(--bg-end) 100%
-                );
-                color: var(--text-color);
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding: 2rem 1rem;
-                text-align: center;
+                font-family: var(--font-sans);
+                color: var(--clay-800);
+                background: var(--cream-50);
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
             }
 
             .container {
-                max-width: 800px;
-                width: 100%;
-            }
-
-            header {
-                margin-bottom: 3rem;
-            }
-
-            h1 {
-                font-size: 2.5rem;
-                font-weight: 800;
-                letter-spacing: -0.02em;
-                margin-bottom: 0.5rem;
-                background: linear-gradient(
-                    90deg,
-                    #ffffff 0%,
-                    var(--accent-color) 100%
-                );
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-
-            p.subtitle {
-                font-size: 1.15rem;
-                color: #a0886b;
-                max-width: 500px;
+                max-width: 1120px;
                 margin: 0 auto;
-                line-height: 1.5;
+                padding: 0 24px;
             }
 
-            .card {
-                background: var(--card-bg);
-                border: 1px solid var(--border-color);
-                border-radius: 24px;
-                padding: 3rem 2rem;
-                backdrop-filter: blur(10px);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-                margin-bottom: 3rem;
+            /* ── Navigation ──────────────────────────────────────────────── */
+            nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 100;
+                background: rgba(250, 247, 242, 0.85);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-bottom: 1px solid rgba(212, 197, 181, 0.2);
             }
-
-            .mascot-preview {
-                font-size: 4rem;
-                margin-bottom: 1rem;
-                animation: float 3s ease-in-out infinite;
+            nav .container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 64px;
             }
-
-            @keyframes float {
-                0%,
-                100% {
-                    transform: translateY(0);
-                }
-                50% {
-                    transform: translateY(-10px);
-                }
-            }
-
-            .btn-container {
-                margin-bottom: 2rem;
-            }
-
-            .download-btn {
-                display: inline-block;
-                background: var(--accent-color);
-                color: #171311;
-                font-weight: 700;
-                font-size: 1.1rem;
-                padding: 1rem 2.5rem;
-                border-radius: 50px;
+            .nav-logo {
+                font-family: var(--font-display);
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--clay-800);
                 text-decoration: none;
-                transition: all 0.2s ease;
-                box-shadow: 0 4px 15px rgba(233, 168, 74, 0.25);
+                letter-spacing: -0.01em;
+            }
+            .nav-links {
+                display: flex;
+                align-items: center;
+                gap: 32px;
+            }
+            .nav-links a {
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: var(--clay-600);
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+            .nav-links a:hover {
+                color: var(--clay-800);
+            }
+            .nav-cta {
+                display: inline-block;
+                padding: 8px 20px;
+                border-radius: 8px;
+                background: var(--clay-800);
+                color: var(--cream-50) !important;
+                font-weight: 600;
+                font-size: 0.875rem;
+                text-decoration: none;
+                transition: background 0.2s;
+            }
+            .nav-cta:hover {
+                background: var(--clay-900) !important;
             }
 
-            .download-btn:hover {
-                background: var(--accent-hover);
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(233, 168, 74, 0.35);
+            /* ── Hero ────────────────────────────────────────────────────── */
+            .hero {
+                padding: 140px 0 80px;
+                text-align: center;
+            }
+            .hero h1 {
+                font-family: var(--font-display);
+                font-size: 3.5rem;
+                font-weight: 700;
+                color: var(--clay-900);
+                letter-spacing: -0.02em;
+                line-height: 1.15;
+                max-width: 700px;
+                margin: 0 auto 20px;
+            }
+            .hero p {
+                font-size: 1.15rem;
+                color: var(--clay-500);
+                max-width: 560px;
+                margin: 0 auto 40px;
+                line-height: 1.7;
+            }
+            .hero-actions {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+            .btn-primary {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 14px 28px;
+                border-radius: 10px;
+                background: var(--clay-800);
+                color: var(--cream-50);
+                font-family: var(--font-sans);
+                font-size: 0.95rem;
+                font-weight: 600;
+                text-decoration: none;
+                transition:
+                    background 0.2s,
+                    transform 0.15s;
+                border: none;
+                cursor: pointer;
+            }
+            .btn-primary:hover {
+                background: var(--clay-900);
+                transform: translateY(-1px);
+            }
+            .btn-secondary {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 14px 28px;
+                border-radius: 10px;
+                background: transparent;
+                color: var(--clay-700);
+                font-family: var(--font-sans);
+                font-size: 0.95rem;
+                font-weight: 500;
+                text-decoration: none;
+                border: 1px solid var(--cream-200);
+                transition:
+                    border-color 0.2s,
+                    color 0.2s;
+                cursor: pointer;
+            }
+            .btn-secondary:hover {
+                border-color: var(--clay-400);
+                color: var(--clay-800);
+            }
+            .hero-image {
+                margin-top: 60px;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(36, 30, 26, 0.12);
+                background: var(--cream-100);
+            }
+            .hero-image img {
+                width: 100%;
+                height: auto;
+                display: block;
             }
 
-            .download-btn:active {
-                transform: translateY(0);
+            /* ── Sections ────────────────────────────────────────────────── */
+            section {
+                padding: 100px 0;
+            }
+            .section-label {
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--clay-400);
+                margin-bottom: 12px;
+            }
+            .section-title {
+                font-family: var(--font-display);
+                font-size: 2.25rem;
+                font-weight: 600;
+                color: var(--clay-900);
+                letter-spacing: -0.01em;
+                line-height: 1.25;
+                margin-bottom: 16px;
+            }
+            .section-subtitle {
+                font-size: 1.05rem;
+                color: var(--clay-500);
+                max-width: 580px;
+                line-height: 1.7;
+            }
+            .section-header {
+                margin-bottom: 60px;
+            }
+            .section-header.centered {
+                text-align: center;
+            }
+            .section-header.centered .section-subtitle {
+                margin: 0 auto;
             }
 
-            .file-info {
-                font-size: 0.85rem;
-                color: #8f7d74;
-            }
-
+            /* ── Features grid ───────────────────────────────────────────── */
             .features-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 1.5rem;
-                text-align: left;
-                margin-top: 2rem;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 32px;
+            }
+            .feature-card {
+                background: var(--white);
+                border: 1px solid var(--cream-200);
+                border-radius: 14px;
+                padding: 32px;
+                transition:
+                    box-shadow 0.2s,
+                    transform 0.2s;
+            }
+            .feature-card:hover {
+                box-shadow: 0 8px 30px rgba(36, 30, 26, 0.06);
+                transform: translateY(-2px);
+            }
+            .feature-icon {
+                width: 44px;
+                height: 44px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 20px;
+                font-size: 1.2rem;
+            }
+            .feature-card h3 {
+                font-size: 1.05rem;
+                font-weight: 600;
+                color: var(--clay-800);
+                margin-bottom: 8px;
+            }
+            .feature-card p {
+                font-size: 0.9rem;
+                color: var(--clay-500);
+                line-height: 1.65;
             }
 
-            .feature-item {
-                background: rgba(0, 0, 0, 0.15);
-                border: 1px solid rgba(255, 255, 255, 0.03);
-                border-radius: 16px;
-                padding: 1.5rem;
+            /* ── Screenshots gallery ─────────────────────────────────────── */
+            .gallery-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+            }
+            .gallery-item {
+                border-radius: 12px;
+                overflow: hidden;
+                border: 1px solid var(--cream-200);
+                background: var(--cream-100);
+                transition:
+                    box-shadow 0.2s,
+                    transform 0.2s;
+                cursor: pointer;
+            }
+            .gallery-item:hover {
+                box-shadow: 0 8px 25px rgba(36, 30, 26, 0.08);
+                transform: translateY(-2px);
+            }
+            .gallery-item img {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+            .gallery-item .caption {
+                padding: 14px 16px;
+                font-size: 0.8rem;
+                color: var(--clay-500);
+                border-top: 1px solid var(--cream-200);
+                background: var(--white);
             }
 
-            .feature-item h3 {
+            /* ── Stats / Social proof ────────────────────────────────────── */
+            .stats-row {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 40px;
+                text-align: center;
+            }
+            .stat-value {
+                font-family: var(--font-display);
+                font-size: 2.5rem;
+                font-weight: 600;
+                color: var(--clay-800);
+                margin-bottom: 4px;
+            }
+            .stat-label {
+                font-size: 0.9rem;
+                color: var(--clay-500);
+            }
+
+            /* ── Testimonials ────────────────────────────────────────────── */
+            .testimonial-card {
+                background: var(--white);
+                border: 1px solid var(--cream-200);
+                border-radius: 14px;
+                padding: 32px;
+                max-width: 700px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            .testimonial-text {
+                font-size: 1.05rem;
+                color: var(--clay-700);
+                line-height: 1.7;
+                font-style: italic;
+                margin-bottom: 20px;
+            }
+            .testimonial-author {
+                font-size: 0.85rem;
+                color: var(--clay-500);
+            }
+            .testimonial-author strong {
+                color: var(--clay-700);
+                font-weight: 600;
+            }
+
+            /* ── CTA / Download ──────────────────────────────────────────── */
+            .cta-section {
+                background: var(--clay-900);
+                border-radius: 20px;
+                padding: 80px 60px;
+                text-align: center;
+                margin-bottom: 0;
+            }
+            .cta-section h2 {
+                font-family: var(--font-display);
+                font-size: 2.5rem;
+                font-weight: 600;
+                color: var(--cream-50);
+                margin-bottom: 16px;
+                letter-spacing: -0.01em;
+            }
+            .cta-section p {
+                font-size: 1.05rem;
+                color: var(--cream-300);
+                max-width: 500px;
+                margin: 0 auto 32px;
+                line-height: 1.7;
+            }
+            .cta-section .btn-primary {
+                background: var(--cream-50);
+                color: var(--clay-900);
+                padding: 16px 36px;
                 font-size: 1rem;
-                color: var(--accent-color);
-                margin-bottom: 0.5rem;
+            }
+            .cta-section .btn-primary:hover {
+                background: var(--white);
+            }
+            .file-info-text {
+                font-size: 0.8rem;
+                color: var(--clay-600);
+                margin-top: 12px;
             }
 
-            .feature-item p {
-                font-size: 0.85rem;
-                color: #a0886b;
-                line-height: 1.4;
-            }
-
+            /* ── Footer ──────────────────────────────────────────────────── */
             footer {
+                padding: 60px 0 40px;
+                border-top: 1px solid var(--cream-200);
+            }
+            .footer-grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+                gap: 40px;
+                margin-bottom: 40px;
+            }
+            .footer-brand p {
                 font-size: 0.85rem;
-                color: #5a4232;
-                margin-top: auto;
+                color: var(--clay-500);
+                max-width: 280px;
+                margin-top: 12px;
+                line-height: 1.6;
             }
-
-            footer a {
-                color: #8f7d74;
+            .footer-col h4 {
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                color: var(--clay-400);
+                margin-bottom: 16px;
+            }
+            .footer-col a {
+                display: block;
+                font-size: 0.85rem;
+                color: var(--clay-600);
                 text-decoration: none;
+                margin-bottom: 8px;
+                transition: color 0.2s;
+            }
+            .footer-col a:hover {
+                color: var(--clay-800);
+            }
+            .footer-bottom {
+                padding-top: 24px;
+                border-top: 1px solid var(--cream-200);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .footer-bottom p {
+                font-size: 0.8rem;
+                color: var(--clay-400);
+            }
+            .footer-bottom-links {
+                display: flex;
+                gap: 24px;
+            }
+            .footer-bottom-links a {
+                font-size: 0.8rem;
+                color: var(--clay-400);
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+            .footer-bottom-links a:hover {
+                color: var(--clay-600);
             }
 
-            footer a:hover {
-                text-decoration: underline;
+            /* ── T&Cs Modal ──────────────────────────────────────────────── */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 200;
+                background: rgba(36, 30, 26, 0.5);
+                backdrop-filter: blur(4px);
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+            }
+            .modal-overlay.open {
+                display: flex;
+            }
+            .modal {
+                background: var(--white);
+                border-radius: 16px;
+                max-width: 640px;
+                width: 100%;
+                max-height: 80vh;
+                overflow-y: auto;
+                padding: 40px;
+                box-shadow: 0 24px 80px rgba(36, 30, 26, 0.2);
+            }
+            .modal h2 {
+                font-family: var(--font-display);
+                font-size: 1.5rem;
+                color: var(--clay-900);
+                margin-bottom: 20px;
+            }
+            .modal h3 {
+                font-size: 0.95rem;
+                font-weight: 600;
+                color: var(--clay-700);
+                margin-top: 20px;
+                margin-bottom: 8px;
+            }
+            .modal p {
+                font-size: 0.85rem;
+                color: var(--clay-500);
+                line-height: 1.7;
+                margin-bottom: 12px;
+            }
+            .modal-close {
+                float: right;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: var(--clay-400);
+                cursor: pointer;
+                padding: 4px;
+                line-height: 1;
+            }
+            .modal-close:hover {
+                color: var(--clay-600);
+            }
+
+            /* ── Responsive ──────────────────────────────────────────────── */
+            @media (max-width: 900px) {
+                .features-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+                .gallery-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+                .footer-grid {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .stats-row {
+                    grid-template-columns: 1fr;
+                    gap: 24px;
+                }
+                .hero h1 {
+                    font-size: 2.5rem;
+                }
+                .cta-section {
+                    padding: 48px 24px;
+                }
+                .cta-section h2 {
+                    font-size: 1.8rem;
+                }
+            }
+            @media (max-width: 600px) {
+                .features-grid,
+                .gallery-grid {
+                    grid-template-columns: 1fr;
+                }
+                .footer-grid {
+                    grid-template-columns: 1fr;
+                }
+                .hero {
+                    padding: 100px 0 60px;
+                }
+                .hero h1 {
+                    font-size: 2rem;
+                }
+                .nav-links a:not(.nav-cta) {
+                    display: none;
+                }
+                .section-title {
+                    font-size: 1.75rem;
+                }
+                .footer-bottom {
+                    flex-direction: column;
+                    text-align: center;
+                }
             }
         </style>
     </head>
     <body>
-        <div class="container">
-            <header>
-                <h1>Football Widget</h1>
-                <p class="subtitle">
-                    A clean, transparent football fixture and stats companion
-                    for your Windows desktop.
-                </p>
-            </header>
-
-            <main class="card">
-                <div class="mascot-preview">⚽</div>
-
-                <div class="btn-container">
-                    <a
-                        href="Football Widget V7.9.9 Setup.exe"
-                        download
-                        class="download-btn"
-                        onclick="trackDownload()"
-                    >
-                        Download for Windows
-                    </a>
+        <!-- ── Navigation ─────────────────────────────────────────────────── -->
+        <nav>
+            <div class="container">
+                <a href="#" class="nav-logo">Football Widget</a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#screenshots">Screenshots</a>
+                    <a href="#download" class="nav-cta">Download</a>
                 </div>
+            </div>
+        </nav>
 
-                <div class="file-info">
-                    File: Football Widget V7.9.9 Setup.exe (approx. 73 MB)
-                </div>
-
-                <div class="features-grid">
-                    <div class="feature-item">
-                        <h3>Sizing Options</h3>
-                        <p>
-                            Double-click or use controls to cycle between Wide,
-                            Compact, and Mini form factors on your screen.
-                        </p>
-                    </div>
-                    <div class="feature-item">
-                        <h3>Built-in AI Assistant</h3>
-                        <p>
-                            Ask tactical and match questions using your own
-                            locally stored Gemini or OpenRouter keys.
-                        </p>
-                    </div>
-                    <div class="feature-item">
-                        <h3>Fixture & Stats Drawer</h3>
-                        <p>
-                            Quick access to upcoming matches, recent results,
-                            and head-to-head history details.
-                        </p>
-                    </div>
-                </div>
-            </main>
-
-            <script>
-                function trackDownload() {
-                    try {
-                        gtag("event", "download", {
-                            event_category: "installer",
-                            event_label: "V7.9.9",
-                            value: 1,
-                        });
-                    } catch (e) {}
-                }
-            </script>
-
-            <footer>
+        <!-- ── Hero ───────────────────────────────────────────────────────── -->
+        <section class="hero">
+            <div class="container">
+                <h1>A live football companion for your desktop.</h1>
                 <p>
-                    Source code available on
+                    A lightweight, translucent widget that sits on your screen
+                    and shows live scores, upcoming fixtures, match stats, and
+                    broadcaster information. No browser tabs required.
+                </p>
+                <div class="hero-actions">
+                    <a href="#download" class="btn-primary"
+                        >Download for Windows</a
+                    >
                     <a
                         href="https://github.com/jadog128/Football-widget.git"
                         target="_blank"
-                        rel="noopener noreferrer"
-                        >GitHub</a
+                        class="btn-secondary"
+                        >View on GitHub</a
                     >
+                </div>
+                <div class="hero-image">
+                    <img
+                        src="images/Screenshot%202026-06-13%20165007.png"
+                        alt="Football Widget on desktop"
+                    />
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Stats ──────────────────────────────────────────────────────── -->
+        <section style="padding: 40px 0 60px">
+            <div class="container">
+                <div class="stats-row">
+                    <div>
+                        <div class="stat-value">1,800+</div>
+                        <div class="stat-label">Active users</div>
+                    </div>
+                    <div>
+                        <div class="stat-value">7.9.9</div>
+                        <div class="stat-label">Latest version</div>
+                    </div>
+                    <div>
+                        <div class="stat-value">Free</div>
+                        <div class="stat-label">No subscription</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Features ───────────────────────────────────────────────────── -->
+        <section id="features" style="background: var(--white)">
+            <div class="container">
+                <div class="section-header centered">
+                    <div class="section-label">Features</div>
+                    <h2 class="section-title">
+                        Everything you need to follow the match.
+                    </h2>
+                    <p class="section-subtitle">
+                        The widget pulls live data from public endpoints so
+                        there is nothing to configure. Just install and go.
+                    </p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div
+                            class="feature-icon"
+                            style="
+                                background: rgba(198, 125, 78, 0.1);
+                                color: var(--accent);
+                            "
+                        >
+                            &#9716;
+                        </div>
+                        <h3>Live scores &amp; fixtures</h3>
+                        <p>
+                            Matches update automatically from ESPN's public API.
+                            Upcoming games, live scores, and full-time results
+                            at a glance.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div
+                            class="feature-icon"
+                            style="
+                                background: rgba(82, 183, 136, 0.1);
+                                color: var(--green);
+                            "
+                        >
+                            &#9673;
+                        </div>
+                        <h3>Animated pixel mascot</h3>
+                        <p>
+                            A small creature lives on your widget. It reacts to
+                            match events: celebration on goals, idle between
+                            games, and sleep when nothing is on.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div
+                            class="feature-icon"
+                            style="
+                                background: rgba(58, 74, 90, 0.1);
+                                color: #3a4a5a;
+                            "
+                        >
+                            &#9670;
+                        </div>
+                        <h3>Three size modes</h3>
+                        <p>
+                            Double-click to cycle between Wide, Compact, and
+                            Mini. Each mode preserves the key information while
+                            adapting to your screen space.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div
+                            class="feature-icon"
+                            style="
+                                background: rgba(198, 125, 78, 0.1);
+                                color: var(--accent);
+                            "
+                        >
+                            &#9717;
+                        </div>
+                        <h3>Match panel &amp; stats</h3>
+                        <p>
+                            Expand the widget to see upcoming fixtures, recent
+                            results, head-to-head records, and win probability
+                            predictions.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div
+                            class="feature-icon"
+                            style="
+                                background: rgba(82, 183, 136, 0.1);
+                                color: var(--green);
+                            "
+                        >
+                            &#9881;
+                        </div>
+                        <h3>Built-in AI assistant</h3>
+                        <p>
+                            Ask tactical questions or get match analysis using
+                            your own Gemini or OpenRouter key. The key stays on
+                            your machine.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div
+                            class="feature-icon"
+                            style="
+                                background: rgba(58, 74, 90, 0.1);
+                                color: #3a4a5a;
+                            "
+                        >
+                            &#9829;
+                        </div>
+                        <h3>Customisable appearance</h3>
+                        <p>
+                            Change colours, gradients, and corner radius. Or
+                            open the pixel editor and draw your own mascot
+                            sprite.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div
+                            class="feature-icon"
+                            style="
+                                background: rgba(198, 125, 78, 0.1);
+                                color: var(--accent);
+                            "
+                        >
+                            &#8635;
+                        </div>
+                        <h3>Floating notifications</h3>
+                        <p>
+                            Goals, kickoffs, and full-time events pop up as a
+                            floating toast window with the correct mascot
+                            animation and a chime sound.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div
+                            class="feature-icon"
+                            style="
+                                background: rgba(82, 183, 136, 0.1);
+                                color: var(--green);
+                            "
+                        >
+                            &#9776;
+                        </div>
+                        <h3>API status &amp; credits</h3>
+                        <p>
+                            Separate windows show DeepSeek API health with a
+                            30-day history grid and a token credit tracker with
+                            low-balance alerts.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div
+                            class="feature-icon"
+                            style="
+                                background: rgba(58, 74, 90, 0.1);
+                                color: #3a4a5a;
+                            "
+                        >
+                            &#8634;
+                        </div>
+                        <h3>Automatic updates</h3>
+                        <p>
+                            The app checks for new versions in the background
+                            and notifies you when an update is available. One
+                            click takes you to the download page.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Screenshots ────────────────────────────────────────────────── -->
+        <section id="screenshots">
+            <div class="container">
+                <div class="section-header centered">
+                    <div class="section-label">Gallery</div>
+                    <h2 class="section-title">See it in action.</h2>
+                    <p class="section-subtitle">
+                        The widget adapts to your workflow. Here are the main
+                        views and features.
+                    </p>
+                </div>
+
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img
+                            src="images/Screenshot%202026-06-13%20165007.png"
+                            alt="Wide widget on desktop"
+                        />
+                        <div class="caption">
+                            Wide mode with live match details, countdown, and
+                            predictions.
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img
+                            src="images/Screenshot%202026-06-13%20165001.png"
+                            alt="Match panel expanded"
+                        />
+                        <div class="caption">
+                            Fixtures and results panel with upcoming matches and
+                            history.
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img
+                            src="images/Screenshot%202026-06-13%20165035.png"
+                            alt="Compact widget mode"
+                        />
+                        <div class="caption">
+                            Compact mode with centred mascot and match summary.
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img
+                            src="images/Screenshot%202026-06-13%20165044.png"
+                            alt="AI assistant chat"
+                        />
+                        <div class="caption">
+                            Built-in AI assistant with match analysis and quick
+                            prompts.
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img
+                            src="images/Screenshot%202026-06-13%20165016.png"
+                            alt="Goal notification toast"
+                        />
+                        <div class="caption">
+                            Goal alert with celebrating mascot and match
+                            details.
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img
+                            src="images/Screenshot%202026-06-13%20173700.png"
+                            alt="Right-click context menu"
+                        />
+                        <div class="caption">
+                            Right-click menu for pinning, settings, and window
+                            controls.
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img
+                            src="images/Screenshot%202026-06-13%20173631.png"
+                            alt="DeepSeek API status widget"
+                        />
+                        <div class="caption">
+                            DeepSeek API status with 30-day health history and
+                            token costs.
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img
+                            src="images/Screenshot%202026-06-13%20173634.png"
+                            alt="Credits tracker widget"
+                        />
+                        <div class="caption">
+                            Credit balance tracker with usage and limit
+                            information.
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img
+                            src="images/Screenshot%202026-06-13%20165022.png"
+                            alt="Low credits warning toast"
+                        />
+                        <div class="caption">
+                            Low credit warning with whale mascot and remaining
+                            balance.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Testimonials ───────────────────────────────────────────────── -->
+        <section style="background: var(--white)">
+            <div class="container">
+                <div class="section-header centered">
+                    <div class="section-label">Testimonials</div>
+                    <h2 class="section-title">What users are saying.</h2>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        I have it running on my second monitor during work. The
+                        notifications are subtle enough that they don't distract
+                        me, but I catch every goal. The AI chat is a nice bonus
+                        for quick tactical questions.
+                    </p>
+                    <div class="testimonial-author">
+                        — <strong>Alex R.</strong>, beta tester
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Download CTA ───────────────────────────────────────────────── -->
+        <section id="download" style="padding: 100px 0 120px">
+            <div class="container">
+                <div class="cta-section">
+                    <h2>Ready to try it?</h2>
+                    <p>
+                        Download the latest installer for Windows. No sign-up
+                        required. The widget runs on its own and respects your
+                        privacy.
+                    </p>
+                    <div>
+                        <a
+                            href="Football Widget V7.9.9 Setup.exe"
+                            download
+                            class="btn-primary"
+                            onclick="trackDownload()"
+                            >Download for Windows</a
+                        >
+                    </div>
+                    <div class="file-info-text">
+                        Football Widget V7.9.9 Setup.exe &mdash; 73 MB &mdash;
+                        Windows 10 or later
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Footer ─────────────────────────────────────────────────────── -->
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <div
+                            style="
+                                font-family: var(--font-display);
+                                font-size: 1.15rem;
+                                font-weight: 600;
+                                color: var(--clay-800);
+                            "
+                        >
+                            Football Widget
+                        </div>
+                        <p>
+                            A lightweight desktop companion for football fans.
+                            Open source and free.
+                        </p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#screenshots">Screenshots</a>
+                        <a href="#download">Download</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Resources</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >GitHub Repository</a
+                        >
+                        <a
+                            href="#"
+                            onclick="
+                                document
+                                    .getElementById('termsModal')
+                                    .classList.add('open');
+                                return false;
+                            "
+                            >Terms &amp; Conditions</a
+                        >
+                        <a
+                            href="#"
+                            onclick="
+                                document
+                                    .getElementById('privacyModal')
+                                    .classList.add('open');
+                                return false;
+                            "
+                            >Privacy Policy</a
+                        >
+                    </div>
+                    <div class="footer-col">
+                        <h4>Community</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git/issues"
+                            target="_blank"
+                            >Report an issue</a
+                        >
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >Contribute</a
+                        >
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Football Widget. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a
+                            href="#"
+                            onclick="
+                                document
+                                    .getElementById('termsModal')
+                                    .classList.add('open');
+                                return false;
+                            "
+                            >Terms</a
+                        >
+                        <a
+                            href="#"
+                            onclick="
+                                document
+                                    .getElementById('privacyModal')
+                                    .classList.add('open');
+                                return false;
+                            "
+                            >Privacy</a
+                        >
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >GitHub</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- ── Terms & Conditions Modal ──────────────────────────────────── -->
+        <div
+            class="modal-overlay"
+            id="termsModal"
+            onclick="if (event.target === this) this.classList.remove('open');"
+        >
+            <div class="modal">
+                <button
+                    class="modal-close"
+                    onclick="
+                        document
+                            .getElementById('termsModal')
+                            .classList.remove('open')
+                    "
+                >
+                    &times;
+                </button>
+                <h2>Terms &amp; Conditions</h2>
+                <p>Last updated: June 2025</p>
+
+                <h3>1. Acceptance of Terms</h3>
+                <p>
+                    By downloading and using Football Widget, you agree to these
+                    terms. If you do not agree, do not install or use the
+                    software.
                 </p>
-            </footer>
+
+                <h3>2. License</h3>
+                <p>
+                    Football Widget is provided free of charge. You are granted
+                    a non-exclusive, non-transferable license to use the
+                    software for personal, non-commercial purposes.
+                    Redistribution of the installer or modified versions of the
+                    source code must comply with the open-source license stated
+                    in the repository.
+                </p>
+
+                <h3>3. API Keys</h3>
+                <p>
+                    The software may ask you to provide API keys for third-party
+                    services such as Gemini, OpenRouter, or DeepSeek. These keys
+                    are stored locally on your machine in the Electron user data
+                    directory. They are never sent to any server other than the
+                    intended third-party API. You are responsible for keeping
+                    these keys confidential.
+                </p>
+
+                <h3>4. Data &amp; Privacy</h3>
+                <p>
+                    Football Widget does not collect or transmit any personal
+                    data. Match data is fetched directly from public APIs (ESPN)
+                    or from third-party services you configure. No analytics or
+                    telemetry is included in the application binary. The website
+                    uses Google Analytics solely for page view and download
+                    tracking.
+                </p>
+
+                <h3>5. Limitation of Liability</h3>
+                <p>
+                    The software is provided "as is" without warranty of any
+                    kind. The authors are not liable for any damages arising
+                    from the use or inability to use the software. Live match
+                    data depends on third-party APIs and may be delayed or
+                    unavailable.
+                </p>
+
+                <h3>6. Changes</h3>
+                <p>
+                    These terms may be updated from time to time. Continued use
+                    of the software after changes constitutes acceptance of the
+                    new terms.
+                </p>
+            </div>
         </div>
+
+        <!-- ── Privacy Policy Modal ───────────────────────────────────────── -->
+        <div
+            class="modal-overlay"
+            id="privacyModal"
+            onclick="if (event.target === this) this.classList.remove('open');"
+        >
+            <div class="modal">
+                <button
+                    class="modal-close"
+                    onclick="
+                        document
+                            .getElementById('privacyModal')
+                            .classList.remove('open')
+                    "
+                >
+                    &times;
+                </button>
+                <h2>Privacy Policy</h2>
+                <p>Last updated: June 2025</p>
+
+                <h3>Information we collect</h3>
+                <p>
+                    Football Widget itself does not collect, store, or transmit
+                    any personal information. All match data is fetched directly
+                    from public endpoints (ESPN) on your behalf. Any API keys
+                    you configure are stored in your local user data directory
+                    and are never sent anywhere except to the intended
+                    third-party service.
+                </p>
+
+                <h3>Website analytics</h3>
+                <p>
+                    This website uses Google Analytics to track page views and
+                    download clicks. This data is anonymous and used solely to
+                    understand how many people visit the site and download the
+                    application. Google's privacy policy applies to this data.
+                </p>
+
+                <h3>Third-party services</h3>
+                <p>
+                    If you choose to configure API keys for Gemini, OpenRouter,
+                    or DeepSeek, your interactions with those services are
+                    governed by their respective privacy policies. The widget
+                    acts as a client and does not intermediate or log those
+                    communications.
+                </p>
+
+                <h3>Updates</h3>
+                <p>
+                    The application periodically checks a hosted version file to
+                    notify you of updates. This check fetches a simple text file
+                    from GitHub's raw servers. No identifying information is
+                    transmitted.
+                </p>
+
+                <h3>Contact</h3>
+                <p>
+                    If you have questions about this policy, please open an
+                    issue on the GitHub repository.
+                </p>
+            </div>
+        </div>
+
+        <!-- ── Download tracking ──────────────────────────────────────────── -->
+        <script>
+            function trackDownload() {
+                try {
+                    gtag("event", "download", {
+                        event_category: "installer",
+                        event_label: "V7.9.9",
+                        value: 1,
+                    });
+                } catch (e) {}
+            }
+        </script>
     </body>
 </html>
