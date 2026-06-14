@@ -669,7 +669,9 @@ function MatchRow({
 
       {/* Expanded Match Details tab */}
       {isExpanded && (
-        <MatchDetailDrawer match={match} onActivate={onActivate} />
+        <div className="animate-slide-down">
+          <MatchDetailDrawer match={match} onActivate={onActivate} />
+        </div>
       )}
     </div>
   );
@@ -731,7 +733,7 @@ export default function MatchPanel() {
 
   return (
     <div
-      className="flex flex-col drag-region"
+      className="flex flex-col drag-region animate-fade-in"
       style={{
         flex: 1,
         overflow: "hidden",

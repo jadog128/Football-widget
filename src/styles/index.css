@@ -210,6 +210,57 @@ body {
     }
 }
 
+@keyframes slideDown {
+    from {
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        max-height: 600px;
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        max-height: 600px;
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-slide-down {
+    animation: slideDown 0.25s ease-out forwards;
+    overflow: hidden;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.2s ease-in forwards;
+    overflow: hidden;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
 @keyframes weatherRain {
     0% {
         transform: translateY(-10px);

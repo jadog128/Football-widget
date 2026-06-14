@@ -86,7 +86,7 @@ export default function DeepseekStandalone() {
             onClick={() => setMenuPos(null)}
           />
           <div
-            className="fixed z-50 no-drag rounded-xl border backdrop-blur-md shadow-2xl py-1 min-w-[160px]"
+            className="fixed z-50 no-drag rounded-xl border backdrop-blur-md shadow-2xl py-1 min-w-[160px] animate-fade-in"
             style={{
               left: menuPos.x,
               top: menuPos.y,
