@@ -1,6 +1,6 @@
 {
-  "version": "8.0.0",
+  "version": "8.1.0",
   "downloadUrl": "https://pitchview.vercel.app",
-  "releaseNotes": "Major update: fixed match panel crash when clicking fixtures. Added null safety for scorers, AI commentary, and match data.",
+  "releaseNotes": "Added slide-down animations for match detail drawer and fade-in for context menus and fixtures panel.",
   "minimumVersion": "7.0.0"
 }
