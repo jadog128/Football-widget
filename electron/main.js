@@ -960,6 +960,7 @@ Keep it short and hyper-focused!`;
             "https://openrouter.ai/api/v1/chat/completions",
             {
               model: "google/gemini-2.5-flash",
+              max_tokens: 150,
               messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: prompt },
