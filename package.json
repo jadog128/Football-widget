@@ -1,7 +1,8 @@
 {
-  "name": "football-widget",
-  "version": "1.0.0",
-  "description": "Retro pixel-art football desktop widget",
+  "name": "pitchview",
+  "version": "8.1.0",
+  "author": "PitchView <https://pitchview.vercel.app>",
+  "description": "A live football desktop companion with scores, fixtures, AI assistant, and API health tracking.",
   "main": "electron/main.js",
   "scripts": {
     "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
