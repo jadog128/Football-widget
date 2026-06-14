@@ -947,7 +947,7 @@ Keep it short and hyper-focused!`;
 
       try {
         if (geminiKey) {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`;
           const response = await axios.post(url, {
             contents: [{ parts: [{ text: systemPrompt + "\n" + prompt }] }],
           });
@@ -1061,7 +1061,7 @@ app
 
     // Required for native Windows notifications to work
     if (process.platform === "win32") {
-      app.setAppUserModelId("FootballWidget");
+      app.setAppUserModelId("PitchView");
     }
 
     createWindow();
