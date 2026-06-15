@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Give Feedback — PitchView Beta</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="css/style.css" />
+        <style>
+            .star-rating {
+                display: flex;
+                gap: 6px;
+                direction: rtl;
+            }
+            .star-rating input {
+                display: none;
+            }
+            .star-rating label {
+                font-size: 1.8rem;
+                color: var(--cream-300);
+                cursor: pointer;
+                transition: color 0.15s;
+            }
+            .star-rating label:hover,
+            .star-rating label:hover ~ label,
+            .star-rating input:checked ~ label {
+                color: var(--accent);
+            }
+        </style>
+    </head>
+    <body>
+        <div id="toast-container" class="toast-container"></div>
+
+        <nav>
+            <div class="container">
+                <a href="index.html" class="nav-logo">PitchView Beta</a>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="report.html">Report Bug</a>
+                    <a href="feedback.html">Feedback</a>
+                    <a href="admin/login.html" class="nav-cta">Admin</a>
+                </div>
+            </div>
+        </nav>
+
+        <section class="form-section" style="background: var(--white); padding: 120px 0 100px;">
+            <div class="container">
+                <div class="section-header centered">
+                    <div class="section-label">Beta Testing</div>
+                    <h2 class="section-title">Give Feedback</h2>
+                    <p class="section-subtitle">
+                        Have a suggestion, feature request, or just want to share
+                        your thoughts? We're all ears.
+                    </p>
+                </div>
+
+                <div class="form-card" id="formCard">
+                    <form id="feedbackForm" novalidate>
+                        <div class="form-group">
+                            <label for="feedbackName">Your Name (optional)</label>
+                            <input
+                                type="text"
+                                id="feedbackName"
+                                class="form-input"
+                                placeholder="How should we address you?"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Rating (optional)</label>
+                            <div class="star-rating" id="starRating">
+                                <input type="radio" name="rating" id="star5" value="5" />
+                                <label for="star5" title="5 stars">&#9733;</label>
+                                <input type="radio" name="rating" id="star4" value="4" />
+                                <label for="star4" title="4 stars">&#9733;</label>
+                                <input type="radio" name="rating" id="star3" value="3" />
+                                <label for="star3" title="3 stars">&#9733;</label>
+                                <input type="radio" name="rating" id="star2" value="2" />
+                                <label for="star2" title="2 stars">&#9733;</label>
+                                <input type="radio" name="rating" id="star1" value="1" />
+                                <label for="star1" title="1 star">&#9733;</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="feedbackMessage">Your Message</label>
+                            <textarea
+                                id="feedbackMessage"
+                                class="form-textarea"
+                                rows="5"
+                                placeholder="Tell us what you think about PitchView. What do you like? What could be better?"
+                                required
+                            ></textarea>
+                            <div class="form-error" id="feedbackMessageError">Please enter your message.</div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                            Submit Feedback
+                        </button>
+                    </form>
+
+                    <div class="success-message" id="successMessage" style="display: none;">
+                        <div class="checkmark">&#10003;</div>
+                        <h3>Feedback Submitted</h3>
+                        <p>Thank you for sharing your thoughts. Every piece of feedback helps us improve.</p>
+                        <a href="feedback.html" class="btn-primary">Send More Feedback</a>
+                        <a href="index.html" class="btn-secondary" style="margin-left: 8px;">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <div
+                            style="
+                                font-family: var(--font-display);
+                                font-size: 1.15rem;
+                                font-weight: 600;
+                                color: var(--clay-800);
+                            "
+                        >
+                            PitchView
+                        </div>
+                        <p>
+                            A lightweight desktop companion for football fans.
+                            Open source and free.
+                        </p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Beta</h4>
+                        <a href="report.html">Report Bug</a>
+                        <a href="feedback.html">Give Feedback</a>
+                        <a href="admin/login.html">Admin Panel</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Resources</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >GitHub Repository</a
+                        >
+                    </div>
+                    <div class="footer-col">
+                        <h4>Community</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git/issues"
+                            target="_blank"
+                            >Report an issue</a
+                        >
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >Contribute</a
+                        >
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2025 PitchView. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a href="https://github.com/jadog128/Football-widget.git" target="_blank">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script src="js/app.js"></script>
+        <script>
+            document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById('feedbackName').value.trim();
+                const ratingEl = document.querySelector('input[name="rating"]:checked');
+                const rating = ratingEl ? parseInt(ratingEl.value) : null;
+                const message = document.getElementById('feedbackMessage').value.trim();
+
+                document.getElementById('feedbackMessageError').classList.remove('visible');
+                let valid = true;
+                if (!message) {
+                    document.getElementById('feedbackMessageError').classList.add('visible');
+                    valid = false;
+                }
+                if (!valid) return;
+
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Submitting...';
+                submitBtn.disabled = true;
+
+                const result = await api('POST', '/api/feedback', { name, rating, message });
+
+                if (result.success) {
+                    document.getElementById('formCard').querySelector('form').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                } else {
+                    showToast(result.message || 'Failed to submit. Please try again.', 'error');
+                    submitBtn.textContent = 'Submit Feedback';
+                    submitBtn.disabled = false;
+                }
+            });
+        </script>
+    </body>
+</html>

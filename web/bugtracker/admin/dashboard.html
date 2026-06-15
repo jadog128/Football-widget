@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Dashboard — PitchView Beta</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../css/style.css" />
+    </head>
+    <body>
+        <div id="toast-container" class="toast-container"></div>
+
+        <nav>
+            <div class="container">
+                <a href="../index.html" class="nav-logo">PitchView Beta</a>
+                <div class="nav-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../report.html">Report Bug</a>
+                    <a href="../feedback.html">Feedback</a>
+                    <a href="dashboard.html" class="nav-cta">Dashboard</a>
+                    <a href="#" id="logoutBtn" style="font-size:0.8rem;color:var(--red);">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <section style="padding: 120px 0 100px;">
+            <div class="container">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:40px;">
+                    <div>
+                        <div class="section-label">Admin</div>
+                        <h1 class="section-title" style="margin-bottom:0;">Bug Reports &amp; Feedback</h1>
+                    </div>
+                    <div style="display:flex;gap:12px;align-items:center;">
+                        <span id="statsLabel" style="font-size:0.85rem;color:var(--clay-400);"></span>
+                        <button onclick="location.reload()" class="btn-secondary" style="padding:8px 16px;font-size:0.8rem;">&#8635; Refresh</button>
+                    </div>
+                </div>
+
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-tab="bugs">
+                        Bug Reports <span class="count" id="bugsCount">0</span>
+                    </button>
+                    <button class="admin-tab" data-tab="feedback">
+                        Feedback <span class="count" id="feedbackCount">0</span>
+                    </button>
+                </div>
+
+                <div id="loadingState" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading submissions&hellip;</p>
+                </div>
+
+                <div id="authRequired" class="auth-required" style="display:none;">
+                    <h2>Authentication Required</h2>
+                    <p>You need to sign in to view this page.</p>
+                    <a href="login.html" class="btn-primary">Go to Login</a>
+                </div>
+
+                <div id="bugsPanel" class="admin-panel visible">
+                    <div id="bugsEmpty" class="empty-state" style="display:none;">
+                        <div class="empty-icon">&#128203;</div>
+                        <p>No bug reports yet. They'll appear here once submitted.</p>
+                    </div>
+                    <div id="bugsList"></div>
+                </div>
+
+                <div id="feedbackPanel" class="admin-panel">
+                    <div id="feedbackEmpty" class="empty-state" style="display:none;">
+                        <div class="empty-icon">&#9998;</div>
+                        <p>No feedback yet. It'll appear here once submitted.</p>
+                    </div>
+                    <div id="feedbackList"></div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <div
+                            style="
+                                font-family: var(--font-display);
+                                font-size: 1.15rem;
+                                font-weight: 600;
+                                color: var(--clay-800);
+                            "
+                        >
+                            PitchView
+                        </div>
+                        <p>
+                            A lightweight desktop companion for football fans.
+                            Open source and free.
+                        </p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Beta</h4>
+                        <a href="../report.html">Report Bug</a>
+                        <a href="../feedback.html">Give Feedback</a>
+                        <a href="../admin/login.html">Admin Panel</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Resources</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >GitHub Repository</a
+                        >
+                    </div>
+                    <div class="footer-col">
+                        <h4>Community</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git/issues"
+                            target="_blank"
+                            >Report an issue</a
+                        >
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >Contribute</a
+                        >
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2025 PitchView. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a href="https://github.com/jadog128/Football-widget.git" target="_blank">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script src="../js/app.js"></script>
+        <script>
+            (async function () {
+                const token = getToken();
+                if (!token) {
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('authRequired').style.display = 'block';
+                    document.getElementById('bugsPanel').classList.remove('visible');
+                    return;
+                }
+
+                document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await api('POST', '/api/logout');
+                    clearToken();
+                    window.location.href = 'login.html';
+                });
+
+                const [bugsRes, feedbackRes] = await Promise.all([
+                    api('GET', '/api/admin/bugs'),
+                    api('GET', '/api/admin/feedback')
+                ]);
+
+                document.getElementById('loadingState').style.display = 'none';
+
+                const bugs = bugsRes.bugs || [];
+                const feedbacks = feedbackRes.feedback || [];
+
+                document.getElementById('bugsCount').textContent = bugs.length;
+                document.getElementById('feedbackCount').textContent = feedbacks.length;
+                document.getElementById('statsLabel').textContent = `${bugs.length} bugs · ${feedbacks.length} feedback`;
+
+                function renderBugs() {
+                    const container = document.getElementById('bugsList');
+                    const empty = document.getElementById('bugsEmpty');
+                    container.innerHTML = '';
+                    if (bugs.length === 0) {
+                        empty.style.display = 'block';
+                        return;
+                    }
+                    empty.style.display = 'none';
+                    bugs.forEach(bug => {
+                        const typeClass = bug.type.toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '') || 'other';
+                        const div = document.createElement('div');
+                        div.className = 'entry-card';
+                        div.innerHTML = `
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-title">${escapeHtml(bug.name)}</div>
+                                    <span class="entry-badge ${typeClass}">${escapeHtml(bug.type)}</span>
+                                </div>
+                                <span style="font-size:0.75rem;color:var(--clay-400);white-space:nowrap;">${formatDate(bug.createdAt)}</span>
+                            </div>
+                            <div class="entry-body">
+                                <strong>Description:</strong><br>${escapeHtml(bug.description)}<br><br>
+                                <strong>Steps to reproduce:</strong><br>${escapeHtml(bug.steps)}
+                            </div>
+                            <div class="entry-actions">
+                                <button class="btn-danger" data-id="${bug.id}" data-type="bug">Delete</button>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                    container.querySelectorAll('.btn-danger[data-type="bug"]').forEach(btn => {
+                        btn.addEventListener('click', async () => {
+                            if (!confirm('Delete this bug report?')) return;
+                            await api('DELETE', `/api/admin/bugs/${btn.dataset.id}`);
+                            location.reload();
+                        });
+                    });
+                }
+
+                function renderFeedback() {
+                    const container = document.getElementById('feedbackList');
+                    const empty = document.getElementById('feedbackEmpty');
+                    container.innerHTML = '';
+                    if (feedbacks.length === 0) {
+                        empty.style.display = 'block';
+                        return;
+                    }
+                    empty.style.display = 'none';
+                    feedbacks.forEach(fb => {
+                        const stars = fb.rating ? '&#9733;'.repeat(fb.rating) + '&#9734;'.repeat(5 - fb.rating) : 'No rating';
+                        const div = document.createElement('div');
+                        div.className = 'entry-card';
+                        div.innerHTML = `
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-title">${escapeHtml(fb.name)}</div>
+                                    <span style="font-size:0.85rem;color:var(--accent);">${stars}</span>
+                                </div>
+                                <span style="font-size:0.75rem;color:var(--clay-400);white-space:nowrap;">${formatDate(fb.createdAt)}</span>
+                            </div>
+                            <div class="entry-body">${escapeHtml(fb.message)}</div>
+                            <div class="entry-actions">
+                                <button class="btn-danger" data-id="${fb.id}" data-type="feedback">Delete</button>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                    container.querySelectorAll('.btn-danger[data-type="feedback"]').forEach(btn => {
+                        btn.addEventListener('click', async () => {
+                            if (!confirm('Delete this feedback?')) return;
+                            await api('DELETE', `/api/admin/feedback/${btn.dataset.id}`);
+                            location.reload();
+                        });
+                    });
+                }
+
+                renderBugs();
+                renderFeedback();
+
+                document.querySelectorAll('.admin-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('visible'));
+                        tab.classList.add('active');
+                        document.getElementById(tab.dataset.tab + 'Panel').classList.add('visible');
+                    });
+                });
+            })();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Login — PitchView Beta</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../css/style.css" />
+        <style>
+            .login-icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: rgba(198, 125, 78, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 16px;
+                font-size: 1.4rem;
+                color: var(--accent);
+            }
+            .login-hint {
+                font-size: 0.75rem;
+                color: var(--clay-300);
+                text-align: center;
+                margin-top: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="toast-container" class="toast-container"></div>
+
+        <nav>
+            <div class="container">
+                <a href="../index.html" class="nav-logo">PitchView Beta</a>
+                <div class="nav-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../report.html">Report Bug</a>
+                    <a href="../feedback.html">Feedback</a>
+                    <a href="login.html" class="nav-cta">Admin</a>
+                </div>
+            </div>
+        </nav>
+
+        <section class="form-section" style="background: var(--white); min-height: 70vh; display: flex; align-items: center; padding: 120px 0 100px;">
+            <div class="container" style="width: 100%;">
+                <div class="form-card" style="max-width: 420px;">
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <div class="login-icon">&#9997;</div>
+                        <div class="section-label" style="margin-bottom: 4px;">Restricted Area</div>
+                        <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--clay-900);">Admin Login</h3>
+                    </div>
+
+                    <form id="loginForm" novalidate>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                class="form-input"
+                                placeholder="Enter admin password"
+                                required
+                                autocomplete="current-password"
+                            />
+                            <div class="form-error" id="passwordError">Please enter the password.</div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                            Sign In
+                        </button>
+
+                        <div class="login-hint">Authorised beta maintainers only.</div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <div
+                            style="
+                                font-family: var(--font-display);
+                                font-size: 1.15rem;
+                                font-weight: 600;
+                                color: var(--clay-800);
+                            "
+                        >
+                            PitchView
+                        </div>
+                        <p>
+                            A lightweight desktop companion for football fans.
+                            Open source and free.
+                        </p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Beta</h4>
+                        <a href="../report.html">Report Bug</a>
+                        <a href="../feedback.html">Give Feedback</a>
+                        <a href="login.html">Admin Panel</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Resources</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >GitHub Repository</a
+                        >
+                    </div>
+                    <div class="footer-col">
+                        <h4>Community</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git/issues"
+                            target="_blank"
+                            >Report an issue</a
+                        >
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >Contribute</a
+                        >
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2025 PitchView. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a href="https://github.com/jadog128/Football-widget.git" target="_blank">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script src="../js/app.js"></script>
+        <script>
+            const token = getToken();
+            if (token) {
+                window.location.href = 'dashboard.html';
+            }
+
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const password = document.getElementById('password').value;
+
+                document.getElementById('passwordError').classList.remove('visible');
+                if (!password) {
+                    document.getElementById('passwordError').classList.add('visible');
+                    return;
+                }
+
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Signing in...';
+                submitBtn.disabled = true;
+
+                const result = await api('POST', '/api/login', { password });
+
+                if (result.success) {
+                    setToken(result.token);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    showToast(result.message || 'Invalid password.', 'error');
+                    submitBtn.textContent = 'Sign In';
+                    submitBtn.disabled = false;
+                }
+            });
+        </script>
+    </body>
+</html>

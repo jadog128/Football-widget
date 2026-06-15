@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Report a Bug — PitchView Beta</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <div id="toast-container" class="toast-container"></div>
+
+        <nav>
+            <div class="container">
+                <a href="index.html" class="nav-logo">PitchView Beta</a>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="report.html">Report Bug</a>
+                    <a href="feedback.html">Feedback</a>
+                    <a href="admin/login.html" class="nav-cta">Admin</a>
+                </div>
+            </div>
+        </nav>
+
+        <section class="form-section" style="background: var(--white); padding: 120px 0 100px;">
+            <div class="container">
+                <div class="section-header centered">
+                    <div class="section-label">Beta Testing</div>
+                    <h2 class="section-title">Report a Bug</h2>
+                    <p class="section-subtitle">
+                        Found something that isn't right? Let us know so we can fix it.
+                    </p>
+                </div>
+
+                <div class="form-card" id="formCard">
+                    <form id="bugForm" novalidate>
+                        <div class="form-group">
+                            <label for="bugType">Bug Type</label>
+                            <select id="bugType" class="form-select" required>
+                                <option value="">Select a bug type&hellip;</option>
+                                <option value="Visual/UI Bug">Visual/UI Bug</option>
+                                <option value="Performance Issue">Performance Issue</option>
+                                <option value="Audio/Sound Bug">Audio/Sound Bug</option>
+                                <option value="Data/Score Incorrect">Data/Score Incorrect</option>
+                                <option value="Crash/Freeze">Crash/Freeze</option>
+                                <option value="Installation/Update">Installation/Update</option>
+                                <option value="Login/Auth">Login/Auth</option>
+                                <option value="Layout/Responsive">Layout/Responsive</option>
+                                <option value="AI/DeepSeek Issue">AI/DeepSeek Issue</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div class="form-error" id="bugTypeError">Please select a bug type.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bugName">Bug Name</label>
+                            <input
+                                type="text"
+                                id="bugName"
+                                class="form-input"
+                                placeholder="Give your bug a short, descriptive name"
+                                required
+                            />
+                            <div class="form-error" id="bugNameError">Please enter a bug name.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bugDescription">Description</label>
+                            <textarea
+                                id="bugDescription"
+                                class="form-textarea"
+                                rows="4"
+                                placeholder="Describe what happened. What did you see? What was the expected behaviour?"
+                                required
+                            ></textarea>
+                            <div class="form-error" id="bugDescriptionError">Please describe the bug.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bugSteps">Steps to Reproduce</label>
+                            <textarea
+                                id="bugSteps"
+                                class="form-textarea"
+                                rows="3"
+                                placeholder="1. Open the widget&#10;2. Click on X&#10;3. Observe the unexpected behaviour"
+                                required
+                            ></textarea>
+                            <div class="form-error" id="bugStepsError">Please provide steps to reproduce.</div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                            Submit Bug Report
+                        </button>
+                    </form>
+
+                    <div class="success-message" id="successMessage" style="display: none;">
+                        <div class="checkmark">&#10003;</div>
+                        <h3>Bug Report Submitted</h3>
+                        <p>Thank you for helping improve PitchView. Your report has been received.</p>
+                        <a href="report.html" class="btn-primary">Report Another Bug</a>
+                        <a href="index.html" class="btn-secondary" style="margin-left: 8px;">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <div
+                            style="
+                                font-family: var(--font-display);
+                                font-size: 1.15rem;
+                                font-weight: 600;
+                                color: var(--clay-800);
+                            "
+                        >
+                            PitchView
+                        </div>
+                        <p>
+                            A lightweight desktop companion for football fans.
+                            Open source and free.
+                        </p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Beta</h4>
+                        <a href="report.html">Report Bug</a>
+                        <a href="feedback.html">Give Feedback</a>
+                        <a href="admin/login.html">Admin Panel</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Resources</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >GitHub Repository</a
+                        >
+                    </div>
+                    <div class="footer-col">
+                        <h4>Community</h4>
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git/issues"
+                            target="_blank"
+                            >Report an issue</a
+                        >
+                        <a
+                            href="https://github.com/jadog128/Football-widget.git"
+                            target="_blank"
+                            >Contribute</a
+                        >
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2025 PitchView. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a href="https://github.com/jadog128/Football-widget.git" target="_blank">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script src="js/app.js"></script>
+        <script>
+            document.getElementById('bugForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const type = document.getElementById('bugType').value;
+                const name = document.getElementById('bugName').value.trim();
+                const description = document.getElementById('bugDescription').value.trim();
+                const steps = document.getElementById('bugSteps').value.trim();
+
+                let valid = true;
+                document.querySelectorAll('.form-error').forEach(el => el.classList.remove('visible'));
+
+                if (!type) { document.getElementById('bugTypeError').classList.add('visible'); valid = false; }
+                if (!name) { document.getElementById('bugNameError').classList.add('visible'); valid = false; }
+                if (!description) { document.getElementById('bugDescriptionError').classList.add('visible'); valid = false; }
+                if (!steps) { document.getElementById('bugStepsError').classList.add('visible'); valid = false; }
+                if (!valid) return;
+
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Submitting...';
+                submitBtn.disabled = true;
+
+                const result = await api('POST', '/api/bugs', { type, name, description, steps });
+
+                if (result.success) {
+                    document.getElementById('formCard').querySelector('form').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                } else {
+                    showToast(result.message || 'Failed to submit. Please try again.', 'error');
+                    submitBtn.textContent = 'Submit Bug Report';
+                    submitBtn.disabled = false;
+                }
+            });
+        </script>
+    </body>
+</html>
