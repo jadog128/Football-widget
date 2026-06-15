@@ -33,28 +33,47 @@ function verifyToken(token) {
   return hash === expected;
 }
 
+let dbReady = false;
+let dbInitPromise = null;
+
 async function initDB() {
-  await db.execute(`
-    CREATE TABLE IF NOT EXISTS bugs (
-      id TEXT PRIMARY KEY,
-      type TEXT NOT NULL,
-      name TEXT NOT NULL,
-      description TEXT NOT NULL,
-      steps TEXT NOT NULL,
-      created_at TEXT NOT NULL
-    )
-  `);
-  await db.execute(`
-    CREATE TABLE IF NOT EXISTS feedback (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL DEFAULT 'Anonymous',
-      rating INTEGER,
-      message TEXT NOT NULL,
-      created_at TEXT NOT NULL
-    )
-  `);
-  console.log('Database tables ready');
+  if (dbInitPromise) return dbInitPromise;
+  dbInitPromise = (async () => {
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS bugs (
+        id TEXT PRIMARY KEY,
+        type TEXT NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT NOT NULL,
+        steps TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    `);
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS feedback (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL DEFAULT 'Anonymous',
+        rating INTEGER,
+        message TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    `);
+    dbReady = true;
+    console.log('Database tables ready');
+  })();
+  return dbInitPromise;
 }
+
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api/') && !dbReady) {
+    try {
+      await initDB();
+    } catch (e) {
+      return res.status(500).json({ success: false, message: 'Database initialization failed' });
+    }
+  }
+  next();
+});
 
 function auth(req, res, next) {
   const token = req.headers.authorization;
