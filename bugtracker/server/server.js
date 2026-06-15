@@ -13,12 +13,25 @@ const db = createClient({
   authToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODE1NDE1MDcsImlkIjoiMDE5ZWNjMjYtMDMwMS03ZDRkLTk5MGUtOGNkNWNhYWJiMGVmIiwicmlkIjoiZGYxY2JiMjktMTRlMy00MWE2LTk1ZjEtM2JmZGE5NzAwMmRiIn0.MzQqjVgJtJo4MgMw1UCZxPBZZD0GMVxVnAgGNQzrgCq51KsjZouMPSGqqoeaKp5ad1DC2k_1lgTaEiCVZwDYAg',
 });
 
-const sessions = new Set();
-
 app.use(cors());
 app.use(express.json());
 
 const BUGTRACKER_DIR = path.join(__dirname, '..');
+const TOKEN_SECRET = 'pitchview-bugtracker-2026';
+
+function generateToken() {
+  const timestamp = Date.now().toString();
+  const hash = crypto.createHash('sha256').update(timestamp + ADMIN_PASSWORD + TOKEN_SECRET).digest('hex');
+  return `${timestamp}.${hash}`;
+}
+
+function verifyToken(token) {
+  if (!token || !token.includes('.')) return false;
+  const [timestamp, hash] = token.split('.');
+  const expected = crypto.createHash('sha256').update(timestamp + ADMIN_PASSWORD + TOKEN_SECRET).digest('hex');
+  if (Date.now() - parseInt(timestamp) > 86400000) return false;
+  return hash === expected;
+}
 
 async function initDB() {
   await db.execute(`
@@ -45,7 +58,7 @@ async function initDB() {
 
 function auth(req, res, next) {
   const token = req.headers.authorization;
-  if (!token || !sessions.has(token)) {
+  if (!token || !verifyToken(token)) {
     return res.status(401).json({ success: false, message: 'Unauthorized' });
   }
   next();
@@ -54,8 +67,7 @@ function auth(req, res, next) {
 app.post('/api/login', (req, res) => {
   const { password } = req.body;
   if (password === ADMIN_PASSWORD) {
-    const token = crypto.randomBytes(32).toString('hex');
-    sessions.add(token);
+    const token = generateToken();
     res.json({ success: true, token });
   } else {
     res.status(401).json({ success: false, message: 'Invalid password' });
@@ -63,8 +75,6 @@ app.post('/api/login', (req, res) => {
 });
 
 app.post('/api/logout', auth, (req, res) => {
-  const token = req.headers.authorization;
-  sessions.delete(token);
   res.json({ success: true });
 });
 
@@ -175,11 +185,15 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(BUGTRACKER_DIR, 'index.html'));
 });
 
-initDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`PitchView Bug Tracker running at http://localhost:${PORT}`);
+if (require.main === module) {
+  initDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`PitchView Bug Tracker running at http://localhost:${PORT}`);
+    });
+  }).catch(err => {
+    console.error('Failed to initialize database:', err);
+    process.exit(1);
   });
-}).catch(err => {
-  console.error('Failed to initialize database:', err);
-  process.exit(1);
-});
+}
+
+module.exports = app;
