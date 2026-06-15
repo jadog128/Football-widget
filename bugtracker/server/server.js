@@ -16,7 +16,7 @@ const db = createClient({
 app.use(cors());
 app.use(express.json());
 
-const BUGTRACKER_DIR = path.join(__dirname, '..');
+const BUGTRACKER_DIR = process.cwd();
 const TOKEN_SECRET = 'pitchview-bugtracker-2026';
 
 function generateToken() {
