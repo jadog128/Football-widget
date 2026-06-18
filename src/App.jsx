@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { useWidgetStore } from "./store/widgetStore";
 import { startUpdatePolling } from "./services/updateService";
 import { useFootballData } from "./hooks/useFootballData";
@@ -180,6 +181,7 @@ export default function App() {
       style={cardStyle}
       onContextMenu={handleContextMenu}
     >
+      <Analytics />
       {viewMode === "wide" && <WidgetWide />}
       {viewMode === "compact" && <WidgetCompact />}
       {viewMode === "mini" && <WidgetMini />}
