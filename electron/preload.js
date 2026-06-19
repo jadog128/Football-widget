@@ -1,8 +1,4 @@
-/**
- * Electron Preload Script
- * Exposes a safe, typed bridge between the renderer (React) and the main process.
- * All window interactions MUST go through this bridge — never expose full Node APIs.
- */
+
 
 const { contextBridge, ipcRenderer } = require("electron");
 
