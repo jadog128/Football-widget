@@ -1,12 +1,3 @@
-/**
- * Electron Main Process
- * New in this version:
- *   - Prefs file (userData/prefs.json) tracks user choices across upgrades
- *   - Startup always re-registers with current exe path (survives upgrades)
- *   - Opacity control (tray submenu + persisted in prefs)
- *   - Notification IPC (renderer sends goal/kickoff events)
- *   - Panel resize with smooth window animation
- */
 
 const {
   app,
